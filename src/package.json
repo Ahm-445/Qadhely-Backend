@@ -23,6 +23,13 @@
     "url": "https://github.com/Ahm-445/Qadhely-Backend/issues"
   },
   "homepage": "https://github.com/Ahm-445/Qadhely-Backend#readme",
+  "jest": {
+    "rootDir": "..",
+    "roots": ["<rootDir>/tests"],
+    "modulePaths": ["<rootDir>/src/node_modules"],
+    "testEnvironment": "node",
+    "testTimeout": 60000
+  },
   "dependencies": {
     "axios": "^1.20.0",
     "cors": "^2.8.6",
@@ -34,6 +41,9 @@
   },
   "devDependencies": {
     "dotenv": "^18.0.8",
-    "nodemon": "^3.1.14"
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.4.3",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.1"
   }
 }

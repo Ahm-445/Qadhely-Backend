@@ -28,6 +28,7 @@ connectDB();
 const corsMiddleware = require("./middleware/corsConfig");
 
 app.use(corsMiddleware);
+app.use(corsMiddleware);
 
 app.use(express.json());
 
@@ -95,6 +96,10 @@ app.post('/auth/verify-otp', async (req, res) => {
 
 // to auth routes 
 app.use("/api/auth", authRoutes);
+
+// US 05 — shopping list groups
+app.use("/api/groups", require("./routes/groupRoutes"));
+app.use("/api/contacts", require("./routes/contactRoutes"));
 
 /*
 // comment once done
