@@ -8,7 +8,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middleware/errorHandler");
 
-//const connectDB = require("./config/db");
+const connectDB = require("./config/db");
 
 //const authRoutes = require("./src/routes/authRoutes");
 //const path = require("path");
@@ -16,7 +16,7 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
-//connectDB();
+connectDB();
 
 
 // middleware
