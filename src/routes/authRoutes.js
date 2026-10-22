@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
@@ -7,7 +6,8 @@ const User = require("../models/User");
 
 
 const AUTHENTICA_URL = "https://api.authentica.sa/api/v2";
-const OTP_METHOD = "whatsapp";
+//const OTP_METHOD = "whatsapp";
+const OTP_METHOD = "sms";
 
 const { normalizeSaudiPhone } = require("../utils/normalizeSaudiPhone")
 
@@ -52,14 +52,13 @@ router.post("/loginSendOTP", async (req, res) => {
 	try {
 
 		// validate number
-		const phoneNumber = normalizeSaudiPhone(req.body.phone);
+		const phoneNumber = normalizeSaudiPhone(req.body.phoneNumber);
 
 		if (!phoneNumber) {
 			return res.status(400).json({ error: "Enter a valid Saudi mobile number." });
 		}
 
 		// check if number exists
-
 		const user = await User.findOne({phoneNumber}); // find user
 
 		if (!user) {
@@ -67,7 +66,7 @@ router.post("/loginSendOTP", async (req, res) => {
 		}
 
 		// send OTP
-		const { ok, data } = await authentica('/send-otp', { method: OTP_METHOD, phone });
+		const { ok, data } = await authentica('/send-otp', { method: OTP_METHOD, phone: phoneNumber });
 
 		if (!ok || !data.success) {
 
@@ -76,7 +75,7 @@ router.post("/loginSendOTP", async (req, res) => {
 
 		}
 
-		return res.status(200);
+		res.status(200).json({ sent: true });
 		
 		
 
@@ -95,9 +94,10 @@ router.post("/loginRecieveOTP", async (req, res) => {
 	try {
 
 		// validate number and opt
-		const phoneNumber = normalizeSaudiPhone(req.body.phone);
+		const phoneNumber = normalizeSaudiPhone(req.body.phoneNumber);
+		const OTP = req.body.otp
 
-		if (!phoneNumber || !req.body.otp) {
+		if (!phoneNumber || !OTP) {
 			return res.status(400).json({ error: "Enter a valid Saudi mobile number." });
 		}
 
@@ -110,7 +110,7 @@ router.post("/loginRecieveOTP", async (req, res) => {
 		}
 
 		// verify otp
-		const { ok, data } = await authentica('/verify-otp', { phone, otp });
+		const { ok, data } = await authentica('/verify-otp', { phone: phoneNumber, otp: OTP });
 		
 		if (!ok || data.status !== true) {
 			return res.status(401).json({ error: data.message || 'Invalid code' });
@@ -120,7 +120,7 @@ router.post("/loginRecieveOTP", async (req, res) => {
 		const payload = {
 			id: user._id,
 			handleName: user.handleName,
-			phoneNumber: user.phoneNumber,
+			phoneNumber: user.phoneNumber
 		}
 
 		const token = jwt.sign(
@@ -129,14 +129,13 @@ router.post("/loginRecieveOTP", async (req, res) => {
 			{expiresIn: process.env.JWT_EXPIRE || "30d"}
 		);
 
-		
+
 		res.status(200).json({
 			message: "login successful",
 			token: token,
 			id: user._id,
-			name: user.name,
-			email: user.email,
-			role: user.role
+			handleName: user.handleName,
+			phoneNumber: user.phoneNumber
 		});
 
 	}
@@ -144,8 +143,6 @@ router.post("/loginRecieveOTP", async (req, res) => {
 		console.log(err);
 		res.status(500).json({error: "Failed to login"});
 	}
-
-	
 
 });
 
