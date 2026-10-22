@@ -25,8 +25,12 @@
   "homepage": "https://github.com/Ahm-445/Qadhely-Backend#readme",
   "jest": {
     "rootDir": "..",
-    "roots": ["<rootDir>/tests"],
-    "modulePaths": ["<rootDir>/src/node_modules"],
+    "roots": [
+      "<rootDir>/tests"
+    ],
+    "modulePaths": [
+      "<rootDir>/src/node_modules"
+    ],
     "testEnvironment": "node",
     "testTimeout": 60000
   },
