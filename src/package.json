@@ -1,0 +1,37 @@
+{
+  "name": "qadhely_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": " jest",
+    "build ": " webpack -- mode production ",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ahm-445/Qadhely-Backend.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ahm-445/Qadhely-Backend/issues"
+  },
+  "homepage": "https://github.com/Ahm-445/Qadhely-Backend#readme",
+  "dependencies": {
+    "axios": "^1.20.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.12.1"
+  },
+  "devDependencies": {
+    "dotenv": "^18.0.8",
+    "nodemon": "^3.1.14"
+  }
+}
