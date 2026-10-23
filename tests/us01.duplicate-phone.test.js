@@ -1,14 +1,24 @@
 // US 01 AC-02: duplicate phone registration — isolated tests (Jest)
 // Run from src/:  npm test
-// Covers only code that exists on origin/login (User model + normalizeSaudiPhone).
-// There is no registration endpoint yet, so the endpoint-level AC-02 tests are test.todo.
+// Covers the User model, normalizeSaudiPhone and POST /api/auth/register (AC-02 only).
 // Uses an in-memory MongoDB. Set TEST_MONGO_URI to use another TEST database instead.
 
+const express = require("express");
+const request = require("supertest");
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
 const User = require("../src/models/User");
 const { normalizeSaudiPhone } = require("../src/utils/normalizeSaudiPhone");
+const authRoutes = require("../src/routes/authRoutes");
+const errorHandler = require("../src/middleware/errorHandler");
+
+
+// small app with only the auth routes (index.js starts a server, so we don't import it)
+const app = express();
+app.use(express.json());
+app.use("/api/auth", authRoutes);
+app.use(errorHandler);
 
 
 let mongo;
@@ -101,9 +111,69 @@ describe("User model phone uniqueness (AC-02)", () => {
 });
 
 
-// Blocked: needs POST /api/auth/register (not implemented on main or login).
-describe("POST /api/auth/register with an already registered phone (AC-02)", () => {
-	test.todo("responds 409 PHONE_ALREADY_REGISTERED with an 'already registered' message");
-	test.todo("does not send an OTP or create a second user");
-	test.todo("detects the duplicate when the phone is sent in another format (05…, 966…)");
+describe("POST /api/auth/register (AC-02)", () => {
+
+	const ALREADY_REGISTERED = { error: "This phone number is already registered." };
+
+	test("returns 409 for an already registered phone number", async () => {
+		await User.create({ handleName: "first", phoneNumber: "+966501234567" });
+
+		const res = await request(app)
+			.post("/api/auth/register")
+			.send({ handleName: "second", phoneNumber: "+966501234567" });
+
+		expect(res.status).toBe(409);
+		expect(res.body).toEqual(ALREADY_REGISTERED);
+	});
+
+	test.each(["0501234567", "966501234567", "00966501234567", "501234567", "05 0123-4567"])(
+		"returns 409 when the registered phone is sent as %s",
+		async (phoneNumber) => {
+			await User.create({ handleName: "first", phoneNumber: "+966501234567" });
+
+			const res = await request(app)
+				.post("/api/auth/register")
+				.send({ handleName: "second", phoneNumber });
+
+			expect(res.status).toBe(409);
+			expect(res.body).toEqual(ALREADY_REGISTERED);
+		}
+	);
+
+	test("does not create a second user on a duplicate", async () => {
+		await User.create({ handleName: "first", phoneNumber: "+966501234567" });
+
+		await request(app)
+			.post("/api/auth/register")
+			.send({ handleName: "second", phoneNumber: "0501234567" });
+
+		expect(await User.countDocuments()).toBe(1);
+	});
+
+	test("returns 501 for a valid new phone number and creates no user", async () => {
+		const res = await request(app)
+			.post("/api/auth/register")
+			.send({ handleName: "newuser", phoneNumber: "0501234567" });
+
+		expect(res.status).toBe(501);
+		expect(await User.countDocuments()).toBe(0);
+	});
+
+	test.each([
+		["missing handleName", { phoneNumber: "0501234567" }],
+		["blank handleName", { handleName: "   ", phoneNumber: "0501234567" }],
+		["non-string handleName", { handleName: 5, phoneNumber: "0501234567" }],
+	])("returns 400 for %s", async (_name, body) => {
+		const res = await request(app).post("/api/auth/register").send(body);
+		expect(res.status).toBe(400);
+	});
+
+	test.each([
+		["missing phoneNumber", { handleName: "abc" }],
+		["non-Saudi phoneNumber", { handleName: "abc", phoneNumber: "+971501234567" }],
+		["malformed phoneNumber", { handleName: "abc", phoneNumber: "12345" }],
+	])("returns 400 for %s", async (_name, body) => {
+		const res = await request(app).post("/api/auth/register").send(body);
+		expect(res.status).toBe(400);
+	});
 });
