@@ -136,7 +136,7 @@ app.get("/", (req, res) => {
 // global error handler
 app.use(errorHandler);
 
-app.listen(PORT, IP_ADDRESS, () => {
+app.listen(PORT, () => {
 	console.log(`Server is running on //${IP_ADDRESS}:${PORT}`);
 	console.log(`Environment: ${process.env.NODE_ENV}`);
 });
