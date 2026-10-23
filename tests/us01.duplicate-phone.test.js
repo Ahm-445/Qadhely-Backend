@@ -12,6 +12,8 @@ const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
 const User = require("../src/models/User");
+const RegistrationOtp = require("../src/models/RegistrationOtp");
+const OtpRequestLog = require("../src/models/OtpRequestLog");
 const { normalizeSaudiPhone } = require("../src/utils/normalizeSaudiPhone");
 const { sendWhatsAppOtp } = require("../src/services/authentica");
 const authRoutes = require("../src/routes/authRoutes");
@@ -46,7 +48,7 @@ afterAll(async () => {
 beforeEach(async () => {
 	jest.clearAllMocks();
 	sendWhatsAppOtp.mockResolvedValue(true);
-	await User.deleteMany({});
+	await Promise.all([User.deleteMany({}), RegistrationOtp.deleteMany({}), OtpRequestLog.deleteMany({})]);
 });
 
 
