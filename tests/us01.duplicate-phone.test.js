@@ -1,7 +1,10 @@
 // US 01 AC-02: duplicate phone registration — isolated tests (Jest)
 // Run from src/:  npm test
-// Covers the User model, normalizeSaudiPhone and POST /api/auth/register (AC-02 only).
+// Covers the User model, normalizeSaudiPhone and POST /api/auth/register (AC-01, AC-02).
+// Authentica is mocked: these tests do not prove real WhatsApp delivery.
 // Uses an in-memory MongoDB. Set TEST_MONGO_URI to use another TEST database instead.
+
+jest.mock("../src/services/authentica"); // no real Authentica / WhatsApp calls
 
 const express = require("express");
 const request = require("supertest");
@@ -10,6 +13,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 
 const User = require("../src/models/User");
 const { normalizeSaudiPhone } = require("../src/utils/normalizeSaudiPhone");
+const { sendWhatsAppOtp } = require("../src/services/authentica");
 const authRoutes = require("../src/routes/authRoutes");
 const errorHandler = require("../src/middleware/errorHandler");
 
@@ -40,6 +44,8 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
+	jest.clearAllMocks();
+	sendWhatsAppOtp.mockResolvedValue(true);
 	await User.deleteMany({});
 });
 
@@ -150,13 +156,53 @@ describe("POST /api/auth/register (AC-02)", () => {
 		expect(await User.countDocuments()).toBe(1);
 	});
 
-	test("returns 501 for a valid new phone number and creates no user", async () => {
+	test("does not send an OTP for a duplicate phone", async () => {
+		await User.create({ handleName: "first", phoneNumber: "+966501234567" });
+
+		await request(app)
+			.post("/api/auth/register")
+			.send({ handleName: "second", phoneNumber: "0501234567" });
+
+		expect(sendWhatsAppOtp).not.toHaveBeenCalled();
+	});
+
+	test("AC-01: sends a WhatsApp OTP to the normalized phone and returns 200", async () => {
 		const res = await request(app)
 			.post("/api/auth/register")
 			.send({ handleName: "newuser", phoneNumber: "0501234567" });
 
-		expect(res.status).toBe(501);
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual({ sent: true, expiresInSeconds: 60 });
+		expect(sendWhatsAppOtp).toHaveBeenCalledTimes(1);
+		expect(sendWhatsAppOtp).toHaveBeenCalledWith("+966501234567");
+	});
+
+	test("does not create the user before OTP verification", async () => {
+		await request(app)
+			.post("/api/auth/register")
+			.send({ handleName: "newuser", phoneNumber: "0501234567" });
+
 		expect(await User.countDocuments()).toBe(0);
+	});
+
+	test("returns 502 with a generic message when the provider fails", async () => {
+		sendWhatsAppOtp.mockResolvedValue(false);
+
+		const res = await request(app)
+			.post("/api/auth/register")
+			.send({ handleName: "newuser", phoneNumber: "0501234567" });
+
+		expect(res.status).toBe(502);
+		expect(res.body).toEqual({ error: "Could not send the verification code. Please try again." });
+		expect(res.body.sent).toBeUndefined();
+		expect(await User.countDocuments()).toBe(0);
+	});
+
+	test("does not call the provider for invalid input", async () => {
+		await request(app).post("/api/auth/register").send({ handleName: "abc", phoneNumber: "12345" });
+		await request(app).post("/api/auth/register").send({ handleName: "", phoneNumber: "0501234567" });
+
+		expect(sendWhatsAppOtp).not.toHaveBeenCalled();
 	});
 
 	test.each([
