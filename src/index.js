@@ -1,6 +1,7 @@
 require("dotenv").config();
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
+const IP_ADDRESS = process.env.LOCAL_IP || "localhost";
 
 const express = require("express");
 const axios = require("axios");
@@ -8,15 +9,18 @@ const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middleware/errorHandler");
 
-//const connectDB = require("./config/db");
+const connectDB = require("./config/db");
 
-//const authRoutes = require("./src/routes/authRoutes");
-//const path = require("path");
+const authRoutes = require("./routes/authRoutes");
+const User = require("./models/User");
+
 
 
 const app = express();
 
-//connectDB();
+connectDB();
+
+
 
 
 // middleware
@@ -90,14 +94,34 @@ app.post('/auth/verify-otp', async (req, res) => {
 });
 
 // to auth routes 
-//app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 // US 05 — shopping list groups
 app.use("/api/groups", require("./routes/groupRoutes"));
 app.use("/api/contacts", require("./routes/contactRoutes"));
 
+/*
+// comment once done
+app.get("/testCreateUser", async (req, res, next) => {
+	
+	try {
 
+		const user = await User.create({
+			handleName: "",
+			phoneNumber: "+966555555555"
+		});
 
+		console.log(user);
+
+		return res.status(201).json(user);
+		
+	}
+	catch (err) {
+		next(err)
+	}
+
+});
+*/
 
 
 // health check
@@ -112,7 +136,7 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
+	console.log(`Server is running on //${IP_ADDRESS}:${PORT}`);
 	console.log(`Environment: ${process.env.NODE_ENV}`);
 });
 
