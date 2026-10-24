@@ -28,7 +28,6 @@ connectDB();
 const corsMiddleware = require("./middleware/corsConfig");
 
 app.use(corsMiddleware);
-app.use(corsMiddleware);
 
 app.use(express.json());
 

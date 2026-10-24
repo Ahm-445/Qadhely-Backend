@@ -57,7 +57,15 @@ const groupSchema = new mongoose.Schema({
 		type: [memberSchema],
 		default: []
 	},
-
+members: {
+		type: [memberSchema],
+		default: [],
+	},
+inviteToken: {
+  	type: String,
+  	unique: true,
+  	sparse: true,
+},
 }, {timestamps: true});
 
 
