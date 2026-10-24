@@ -216,3 +216,115 @@ describe("GET /api/groups", () => {
 	});
 
 });
+describe("POST /api/groups/:groupId/members — US 06", () => {
+  test("admin can add a registered user to an existing group", async () => {
+    const [admin, friend] = await makeUsers(2);
+
+    const created = await request(app)
+      .post("/api/groups")
+      .set("Authorization", tokenFor(admin))
+      .send({ name: "Family" });
+
+    const res = await request(app)
+      .post(`/api/groups/${created.body.group.id}/members`)
+      .set("Authorization", tokenFor(admin))
+      .send({ userId: String(friend._id) });
+
+    expect(res.status).toBe(200);
+    expect(res.body.group.memberCount).toBe(2);
+
+    const saved = await Group.findById(created.body.group.id);
+    expect(saved.roleOf(friend._id)).toBe("member");
+  });
+  test("regular member cannot add another user", async () => {
+  const [admin, member, friend] = await makeUsers(3);
+
+  const created = await request(app)
+    .post("/api/groups")
+    .set("Authorization", tokenFor(admin))
+    .send({ name: "Family", memberIds: [String(member._id)] });
+
+  const res = await request(app)
+    .post(`/api/groups/${created.body.group.id}/members`)
+    .set("Authorization", tokenFor(member))
+    .send({ userId: String(friend._id) });
+
+  expect(res.status).toBe(403);
+});
+
+test("cannot add an unregistered user", async () => {
+  const [admin] = await makeUsers(1);
+
+  const created = await request(app)
+    .post("/api/groups")
+    .set("Authorization", tokenFor(admin))
+    .send({ name: "Family" });
+
+  const fakeUserId = new (require("mongoose").Types.ObjectId)();
+
+  const res = await request(app)
+    .post(`/api/groups/${created.body.group.id}/members`)
+    .set("Authorization", tokenFor(admin))
+    .send({ userId: String(fakeUserId) });
+
+  expect(res.status).toBe(400);
+  expect(res.body.error).toBe(
+    "This contact is not registered with Qadhely."
+  );
+});
+
+test("admin can generate a group invite link", async () => {
+  const [admin] = await makeUsers(1);
+
+  const created = await request(app)
+    .post("/api/groups")
+    .set("Authorization", tokenFor(admin))
+    .send({ name: "Family" });
+
+  const res = await request(app)
+    .post(`/api/groups/${created.body.group.id}/invite`)
+    .set("Authorization", tokenFor(admin));
+
+  expect(res.status).toBe(200);
+  expect(res.body.inviteLink).toMatch(
+    /^\/api\/groups\/join\/[a-f0-9]{48}$/
+  );
+});
+test("registered user can join a group with an invite link", async () => {
+  const [admin, invitee] = await makeUsers(2);
+
+  const created = await request(app)
+    .post("/api/groups")
+    .set("Authorization", tokenFor(admin))
+    .send({ name: "Family" });
+
+  const invite = await request(app)
+    .post(`/api/groups/${created.body.group.id}/invite`)
+    .set("Authorization", tokenFor(admin));
+
+  const token = invite.body.inviteLink.split("/").pop();
+
+  const joined = await request(app)
+    .post(`/api/groups/join/${token}`)
+    .set("Authorization", tokenFor(invitee));
+
+  expect(joined.status).toBe(200);
+  expect(joined.body.message).toBe("Joined group successfully.");
+  expect(joined.body.group.memberCount).toBe(2);
+
+  const saved = await Group.findById(created.body.group.id);
+  expect(saved.roleOf(invitee._id)).toBe("member");
+});
+test("cannot join a group with an invalid invite link", async () => {
+  const [invitee] = await makeUsers(1);
+
+  const res = await request(app)
+    .post("/api/groups/join/invalid-token")
+    .set("Authorization", tokenFor(invitee));
+
+  expect(res.status).toBe(404);
+  expect(res.body.error).toBe("Invalid or expired invite link.");
+});
+
+
+});

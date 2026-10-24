@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Group = require("../models/Group");
 const User = require("../models/User");
-
+const crypto = require("crypto");
 const { ROLES, GROUP_NAME_MAX, MAX_INITIAL_MEMBERS } = Group;
 
 
@@ -127,5 +127,143 @@ const getMyGroups = async (req, res) => {
 	}
 };
 
+const addGroupMember = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const { userId } = req.body || {};
+    const requesterId = String(req.user.id);
 
-module.exports = { createGroup, getMyGroups };
+    if (!mongoose.isValidObjectId(groupId)) {
+      return res.status(400).json({ error: "Invalid group ID." });
+    }
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ error: "Invalid user ID." });
+    }
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found." });
+    }
+
+    const requesterRole = group.roleOf(requesterId);
+
+    if (!Group.isAdminRole(requesterRole)) {
+      return res.status(403).json({
+        error: "Only the group admin can add members.",
+      });
+    }
+
+    const userExists = await User.exists({ _id: userId });
+
+    if (!userExists) {
+      return res.status(400).json({
+        error: "This contact is not registered with Qadhely.",
+      });
+    }
+
+    if (group.members.some((member) => String(member.user) === String(userId))) {
+      return res.status(409).json({
+        error: "This user is already a group member.",
+      });
+    }
+
+    group.members.push({
+      user: userId,
+      role: ROLES.MEMBER,
+    });
+
+    await group.save();
+
+    return res.status(200).json({
+      message: "Member added successfully.",
+      group: toGroupResponse(group, requesterId),
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Failed to add group member." });
+  }
+};
+
+const generateGroupInvite = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const requesterId = String(req.user.id);
+
+    if (!mongoose.isValidObjectId(groupId)) {
+      return res.status(400).json({ error: "Invalid group ID." });
+    }
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found." });
+    }
+
+    const requesterRole = group.roleOf(requesterId);
+
+    if (!Group.isAdminRole(requesterRole)) {
+      return res.status(403).json({
+        error: "Only the group admin can generate an invite link.",
+      });
+    }
+
+    if (!group.inviteToken) {
+      group.inviteToken = crypto.randomBytes(24).toString("hex");
+      await group.save();
+    }
+
+    return res.status(200).json({
+      inviteLink: `/api/groups/join/${group.inviteToken}`,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Failed to generate invite link." });
+  }
+};
+
+const joinGroupByInvite = async (req, res) => {
+  try {
+    const { inviteToken } = req.params;
+    const userId = String(req.user.id);
+
+    const group = await Group.findOne({ inviteToken });
+
+    if (!group) {
+      return res.status(404).json({
+        error: "Invalid or expired invite link.",
+      });
+    }
+
+    const alreadyMember = group.members.some(
+      (member) => String(member.user) === userId
+    );
+
+    if (alreadyMember) {
+      return res.status(200).json({
+        message: "You are already a member of this group.",
+        group: toGroupResponse(group, userId),
+      });
+    }
+
+    group.members.push({
+      user: userId,
+      role: ROLES.MEMBER,
+    });
+
+    await group.save();
+
+    return res.status(200).json({
+      message: "Joined group successfully.",
+      group: toGroupResponse(group, userId),
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: "Failed to join group.",
+    });
+  }
+};
+
+module.exports = { createGroup, getMyGroups, addGroupMember, generateGroupInvite, joinGroupByInvite,};
