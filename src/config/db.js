@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const dns = require("dns");
 
-// this is the dns address that allows us to resolve the url correctly
-dns.setServers([
-	"1.1.1.1",
-])
+// Optional: some networks can't resolve the Atlas address with their own DNS.
+// If yours can't, set DNS_SERVERS in .env (e.g. DNS_SERVERS=1.1.1.1,8.8.8.8).
+if (process.env.DNS_SERVERS) {
+	dns.setServers(process.env.DNS_SERVERS.split(",").map((s) => s.trim()));
+}
 
 const connectDB = async () => {
 	try {
