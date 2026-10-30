@@ -96,6 +96,9 @@ app.post('/auth/verify-otp', async (req, res) => {
 // to auth routes 
 app.use("/api/auth", authRoutes);
 
+// push tokens: link the phone on login, unlink it on logout
+app.use("/api/devices", require("./routes/devicesRoute"));
+
 // US 05 — shopping list groups
 app.use("/api/groups", require("./routes/groupRoutes"));
 app.use("/api/contacts", require("./routes/contactRoutes"));
