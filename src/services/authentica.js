@@ -1,8 +1,8 @@
 const AUTHENTICA_URL = "https://api.authentica.sa/api/v2";
-const OTP_METHOD = "sms";
+const OTP_METHOD = "whatsapp";
 
 
-// Sends an OTP through Authentica over SMS (SF-03).
+// Sends an OTP through Authentica over WhatsApp (SF-03).
 // Resolves to true only when Authentica confirms the request; never throws and
 // never logs the API key or the phone number.
 async function sendWhatsAppOtp(phone) {
