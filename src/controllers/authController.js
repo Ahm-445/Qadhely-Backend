@@ -6,7 +6,7 @@ const { normalizeSaudiPhone } = require("../utils/normalizeSaudiPhone")
 
 const AUTHENTICA_URL = "https://api.authentica.sa/api/v2";
 const OTP_METHOD = "whatsapp";
-//const OTP_METHOD = "sms";
+const OTP_METHOD = "sms";
 
 
 
