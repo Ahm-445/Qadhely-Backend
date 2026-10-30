@@ -266,4 +266,67 @@ const joinGroupByInvite = async (req, res) => {
   }
 };
 
-module.exports = { createGroup, getMyGroups, addGroupMember, generateGroupInvite, joinGroupByInvite,};
+// US 30 — order of the members list: creator, then admins, then members
+const ROLE_ORDER = { [ROLES.CREATOR]: 0, [ROLES.ADMIN]: 1, [ROLES.MEMBER]: 2 };
+
+
+// GET /api/groups/:groupId/members
+// US 30 (SF-25): the group's current members with their handle name and role.
+// AC-01: only the Group Creator and admins can see it; AC-03 / NFR-10: anyone else gets 403.
+// AC-02: read from the database on every request, so joins and leaves show up right away.
+const getGroupMembers = async (req, res) => {
+	try {
+
+		const { groupId } = req.params;
+		const requesterId = String(req.user.id);
+
+		if (!mongoose.isValidObjectId(groupId)) {
+			return res.status(400).json({ error: "Invalid group ID." });
+		}
+
+		const group = await Group.findById(groupId).select("members");
+
+		if (!group) {
+			return res.status(404).json({ error: "Group not found." });
+		}
+
+		// check the caller's role on the stored ids (before looking up names)
+		const requesterRole = group.roleOf(requesterId);
+
+		if (!requesterRole) {
+			return res.status(403).json({ error: "You are not a member of this group." });
+		}
+
+		if (!Group.isAdminRole(requesterRole)) {
+			return res.status(403).json({ error: "Only group admins can view the members." });
+		}
+
+		// handle names only; phone numbers are not sent (NFR-09)
+		const users = await User.find({ _id: { $in: group.members.map((m) => m.user) } })
+			.select("handleName")
+			.lean();
+
+		const nameById = new Map(users.map((u) => [String(u._id), u.handleName]));
+
+		const members = group.members
+			.filter((m) => nameById.has(String(m.user)))		// skip deleted accounts
+			.map((m) => ({
+				id: String(m.user),
+				handleName: nameById.get(String(m.user)),
+				role: m.role,
+				joinedAt: m.joinedAt,
+				isMe: String(m.user) === requesterId,
+			}))
+			.sort((a, b) => (ROLE_ORDER[a.role] - ROLE_ORDER[b.role]) || a.handleName.localeCompare(b.handleName));
+
+		return res.status(200).json({ groupId: String(group._id), members });
+
+	}
+	catch (err) {
+		console.log(err);
+		res.status(500).json({ error: "Failed to load group members." });
+	}
+};
+
+
+module.exports = { createGroup, getMyGroups, addGroupMember, generateGroupInvite, joinGroupByInvite, getGroupMembers };
