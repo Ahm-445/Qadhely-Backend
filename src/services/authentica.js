@@ -5,7 +5,7 @@ const OTP_METHOD = "sms";
 // Sends an OTP through Authentica over SMS (SF-03).
 // Resolves to true only when Authentica confirms the request; never throws and
 // never logs the API key or the phone number.
-async function sendWhatsAppOtp(phone) {
+async function sendAuthOtp(phone) {
 
 	try {
 
@@ -80,4 +80,4 @@ async function verifyOtp(phone, otp) {
 }
 
 
-module.exports = { sendWhatsAppOtp, verifyOtp };
+module.exports = { sendAuthOtp, verifyOtp };

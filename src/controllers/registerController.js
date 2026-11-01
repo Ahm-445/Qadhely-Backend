@@ -5,7 +5,7 @@ const RegistrationOtp = require("../models/RegistrationOtp");
 const OtpRequestLog = require("../models/OtpRequestLog");
 
 const { normalizeSaudiPhone } = require("../utils/normalizeSaudiPhone");
-const { sendWhatsAppOtp, verifyOtp } = require("../services/authentica");
+const { sendAuthOtp, verifyOtp } = require("../services/authentica");
 
 
 // SF-04: an OTP is valid for 60 seconds. Used by the client for the countdown (SF-05).
@@ -116,7 +116,7 @@ const register = async (req, res) => {
 		}
 
 		// AC-01: send the OTP via WhatsApp
-		const sent = await sendWhatsAppOtp(phoneNumber);
+		const sent = await sendAuthOtp(phoneNumber);
 
 		if (!sent) {
 			await releaseOtpRequest(phoneNumber, reservation.windowStart);

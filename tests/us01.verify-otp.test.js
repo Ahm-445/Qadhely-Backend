@@ -16,7 +16,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../src/models/User");
 const RegistrationOtp = require("../src/models/RegistrationOtp");
 const OtpRequestLog = require("../src/models/OtpRequestLog");
-const { sendWhatsAppOtp, verifyOtp } = require("../src/services/authentica");
+const { sendAuthOtp, verifyOtp } = require("../src/services/authentica");
 const authRoutes = require("../src/routes/authRoutes");
 
 
@@ -54,7 +54,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
 	jest.clearAllMocks();
-	sendWhatsAppOtp.mockResolvedValue(true);
+	sendAuthOtp.mockResolvedValue(true);
 	verifyOtp.mockResolvedValue("valid");
 	jest.spyOn(console, "error").mockImplementation(() => {});
 	await Promise.all([User.deleteMany({}), RegistrationOtp.deleteMany({}), OtpRequestLog.deleteMany({})]);
@@ -379,7 +379,7 @@ describe("POST /api/auth/register — hourly OTP limit (NFR-01)", () => {
 		const statuses = results.map((r) => r.status).sort();
 
 		expect(statuses).toEqual([200, 200, 200, 200, 200, 429, 429, 429]);
-		expect(sendWhatsAppOtp).toHaveBeenCalledTimes(5);
+		expect(sendAuthOtp).toHaveBeenCalledTimes(5);
 		expect((await OtpRequestLog.findOne({ phoneNumber: PHONE })).count).toBe(5);
 		expect(await RegistrationOtp.countDocuments()).toBe(1);
 	});
@@ -401,7 +401,7 @@ describe("POST /api/auth/register — hourly OTP limit (NFR-01)", () => {
 		expect(res.status).toBe(429);
 		expect(res.body.code).toBe("OTP_RATE_LIMITED");
 		expect(res.body.retryAfterSeconds).toBeGreaterThan(0);
-		expect(sendWhatsAppOtp).toHaveBeenCalledTimes(5);
+		expect(sendAuthOtp).toHaveBeenCalledTimes(5);
 	});
 
 	test("counts requests per phone number", async () => {
@@ -428,10 +428,10 @@ describe("POST /api/auth/register — hourly OTP limit (NFR-01)", () => {
 	});
 
 	test("a failed send does not use up the quota", async () => {
-		sendWhatsAppOtp.mockResolvedValue(false);
+		sendAuthOtp.mockResolvedValue(false);
 		for (let i = 0; i < 6; i++) expect((await register()).status).toBe(502);
 
-		sendWhatsAppOtp.mockResolvedValue(true);
+		sendAuthOtp.mockResolvedValue(true);
 		for (let i = 0; i < 5; i++) expect((await register()).status).toBe(200);
 		expect((await register()).status).toBe(429);
 	});
