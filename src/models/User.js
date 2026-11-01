@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema ({
 			match: [SAUDI_PHONE_REGEX, "Phone number must be Saudi."]
 		},
 
+		// push tokens of the phones this user is logged in on
+		pushTokens: {
+			type: [String],
+			default: []
+		},
 
 	}, 
 	{timestamps: true}

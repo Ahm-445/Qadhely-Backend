@@ -15,7 +15,7 @@ const User = require("../src/models/User");
 const RegistrationOtp = require("../src/models/RegistrationOtp");
 const OtpRequestLog = require("../src/models/OtpRequestLog");
 const { normalizeSaudiPhone } = require("../src/utils/normalizeSaudiPhone");
-const { sendWhatsAppOtp } = require("../src/services/authentica");
+const { sendAuthOtp } = require("../src/services/authentica");
 const authRoutes = require("../src/routes/authRoutes");
 const errorHandler = require("../src/middleware/errorHandler");
 
@@ -47,7 +47,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
 	jest.clearAllMocks();
-	sendWhatsAppOtp.mockResolvedValue(true);
+	sendAuthOtp.mockResolvedValue(true);
 	await Promise.all([User.deleteMany({}), RegistrationOtp.deleteMany({}), OtpRequestLog.deleteMany({})]);
 });
 
@@ -165,7 +165,7 @@ describe("POST /api/auth/register (AC-02)", () => {
 			.post("/api/auth/register")
 			.send({ handleName: "second", phoneNumber: "0501234567" });
 
-		expect(sendWhatsAppOtp).not.toHaveBeenCalled();
+		expect(sendAuthOtp).not.toHaveBeenCalled();
 	});
 
 	test("AC-01: sends a WhatsApp OTP to the normalized phone and returns 200", async () => {
@@ -175,8 +175,8 @@ describe("POST /api/auth/register (AC-02)", () => {
 
 		expect(res.status).toBe(200);
 		expect(res.body).toEqual({ sent: true, expiresInSeconds: 60 });
-		expect(sendWhatsAppOtp).toHaveBeenCalledTimes(1);
-		expect(sendWhatsAppOtp).toHaveBeenCalledWith("+966501234567");
+		expect(sendAuthOtp).toHaveBeenCalledTimes(1);
+		expect(sendAuthOtp).toHaveBeenCalledWith("+966501234567");
 	});
 
 	test("does not create the user before OTP verification", async () => {
@@ -188,7 +188,7 @@ describe("POST /api/auth/register (AC-02)", () => {
 	});
 
 	test("returns 502 with a generic message when the provider fails", async () => {
-		sendWhatsAppOtp.mockResolvedValue(false);
+		sendAuthOtp.mockResolvedValue(false);
 
 		const res = await request(app)
 			.post("/api/auth/register")
@@ -204,7 +204,7 @@ describe("POST /api/auth/register (AC-02)", () => {
 		await request(app).post("/api/auth/register").send({ handleName: "abc", phoneNumber: "12345" });
 		await request(app).post("/api/auth/register").send({ handleName: "", phoneNumber: "0501234567" });
 
-		expect(sendWhatsAppOtp).not.toHaveBeenCalled();
+		expect(sendAuthOtp).not.toHaveBeenCalled();
 	});
 
 	test.each([
