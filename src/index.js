@@ -44,58 +44,6 @@ const AUTHENTICA_URL = "https://api.authentica.sa/api/v2";
 const OTP_METHOD = "whatsapp";
 
 
-async function authentica(path, body) {
-	const res = await fetch(`${AUTHENTICA_URL}${path}`, {
-		method: 'POST',
-		headers: {
-			'X-Authorization': process.env.AUTHENTICA_API_KEY,
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-		},
-		body: JSON.stringify(body),
-	});
-	const data = await res.json().catch(() => ({}));
-	return { ok: res.ok, data };
-}
-
-
-// Send OTP via WhatsApp
-
-const { normalizeSaudiPhone } = require("./utils/normalizeSaudiPhone");
-
-app.post('/auth/send-otp', async (req, res) => {
-	
-	const phone = normalizeSaudiPhone(req.body.phone);
-
-	if (!phone) {
-		return res.status(400).json({ error: 'Enter a valid Saudi mobile number' });
-	}
-
-	const { ok, data } = await authentica('/send-otp', { method: OTP_METHOD, phone });
-	if (!ok || !data.success) {
-		console.error('Authentica send-otp failed:', data);
-		return res.status(502).json({ error: data.message || 'Could not send code' });
-	}
-	res.json({ sent: true });
-});
-
-// Verify OTP (same as before; phone is required for WhatsApp)
-app.post('/auth/verify-otp', async (req, res) => {
-	
-	const phone = normalizeSaudiPhone(req.body.phone);
-
-	if (!phone || !req.body.otp) {
-		return res.status(400).json({ error: 'Phone and code are required' });
-	}
-
-
-	const { ok, data } = await authentica('/verify-otp', { phone, otp });
-	if (!ok || data.status !== true) {
-		return res.status(401).json({ error: data.message || 'Invalid code' });
-	}
-
-	res.json({ verified: true });
-});
 
 // to auth routes 
 app.use("/api/auth", authRoutes);
