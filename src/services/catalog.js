@@ -106,4 +106,17 @@ function searchCatalog(query, { limit = 20, offset = 0 } = {}) {
 }
 
 
-module.exports = { searchCatalog, normalize, toCatalogItem, CATALOG_SIZE: ENTRIES.length };
+// every product by id, built once from the same entries the search uses
+const ITEMS_BY_ID = new Map(ENTRIES.map((entry) => [entry.item.id, entry.item]));
+
+
+/**
+ * The catalog product for a list item's catalogItemId ("tamimi-137805"), or null when the
+ * catalog has no such product. Same shape as a search result.
+ */
+function getCatalogItem(id) {
+	return ITEMS_BY_ID.get(id) ?? null;
+}
+
+
+module.exports = { searchCatalog, getCatalogItem, normalize, toCatalogItem, CATALOG_SIZE: ENTRIES.length };
