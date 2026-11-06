@@ -15,6 +15,7 @@ const authRoutes = require("./routes/authRoutes");
 const devicesRoute = require("./routes/devicesRoute");
 const groupRoutes = require("./routes/groupRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const catalogRoutes = require("./routes/catalogRoutes");
 
 const User = require("./models/User");
 
@@ -106,6 +107,9 @@ app.use("/api/devices", devicesRoute);
 // US 05 — shopping list groups
 app.use("/api/groups", groupRoutes);
 app.use("/api/contacts", contactRoutes);
+
+// US 12 — product catalog search
+app.use("/api/catalog", catalogRoutes);
 
 /*
 // comment once done
