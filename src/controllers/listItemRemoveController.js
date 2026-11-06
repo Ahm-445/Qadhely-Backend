@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
+const { getCatalogItem } = require("../services/catalog");
 
 
 // US 13 — Remove Item from List (SF-42)
@@ -22,6 +23,8 @@ function toListItemResponse(item) {
 		customName: item.customName ?? null,
 		customImage: item.customImage ?? null,
 		customStore: item.customStore ?? null,
+		// US 15: the name, image and store the list shows; null for a custom request
+		catalogItem: item.catalogItemId ? getCatalogItem(item.catalogItemId) : null,
 		createdAt: item.createdAt,
 	};
 }

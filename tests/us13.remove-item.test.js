@@ -267,6 +267,8 @@ describe("GET /api/groups/:groupId/items — the list the app shows", () => {
 		expect(res.body.groupId).toBe(String(group._id));
 		expect(res.body.items.map((i) => i.id)).toEqual([String(second._id), String(first._id)]);
 		expect(res.body.items[0]).toMatchObject({ catalogItemId: CATALOG_ITEM_ID, quantity: 3, unit: "piece" });
+		// US 15: each row carries the catalog product the list shows
+		expect(res.body.items[0].catalogItem).toMatchObject({ id: CATALOG_ITEM_ID, name_en: "Large White Eggs Plastic Packaging", store: "Tamimi" });
 	});
 
 	test("only this group's items are returned", async () => {
