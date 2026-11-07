@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const protect = require("../middleware/protected");
 const {createGroup,getMyGroups,addGroupMember,generateGroupInvite,joinGroupByInvite,getGroupMembers} = require("../controllers/groupController");
-const { addListItem } = require("../controllers/listItemController");
+const { addListItem, updateListItem } = require("../controllers/listItemController");
 const { getListItems, removeListItem } = require("../controllers/listItemRemoveController");
 
 
@@ -20,5 +20,7 @@ router.post("/:groupId/items", protect, addListItem);
 // US 13 — read the list (for the app) and remove an item from it
 router.get("/:groupId/items", protect, getListItems);
 router.delete("/:groupId/items/:itemId", protect, removeListItem);
+// US 14 — modify an item's quantity and unit
+router.patch("/:groupId/items/:itemId", protect, updateListItem);
 
 module.exports = router;
