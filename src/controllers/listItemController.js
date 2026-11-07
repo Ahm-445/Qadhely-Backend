@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { UNITS, CATALOG_ITEM_ID_PATTERN, CATALOG_ITEM_ID_MAX } = ListItem;
+const { getCatalogItem } = require("../services/catalog");
 
 
 // shape sent to the app
@@ -17,6 +18,8 @@ function toListItemResponse(item, groupId) {
 		customName: item.customName,
 		customImage: item.customImage,
 		customStore: item.customStore,
+		// US 15: the name, image and store the list shows; null for a custom request
+		catalogItem: item.catalogItemId ? getCatalogItem(item.catalogItemId) : null,
 		createdAt: item.createdAt,
 	};
 }

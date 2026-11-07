@@ -99,6 +99,7 @@ describe("POST /api/groups/:groupId/items — AC-01 (an admin stores an item on 
 			unit: "piece",
 			addedBy: String(creator._id),
 		});
+		expect(res.body.item.catalogItem).toMatchObject({ id: CATALOG_ITEM_ID, name_en: "Large White Eggs Plastic Packaging" });
 
 		const stored = await ListItem.findById(res.body.item.id).lean();
 		expect(stored).toMatchObject({

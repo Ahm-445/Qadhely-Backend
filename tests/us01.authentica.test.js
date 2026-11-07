@@ -1,6 +1,6 @@
 // US 01 AC-01: Authentica send-otp service — unit tests with a mocked fetch (Jest)
 // Run from src/:  npm test
-// No real Authentica / SMS request is made, so these tests do not prove real delivery.
+// No real Authentica / WhatsApp request is made, so these tests do not prove real delivery.
 
 process.env.AUTHENTICA_API_KEY = "test-secret-key";
 
@@ -27,7 +27,7 @@ afterEach(() => {
 
 describe("sendAuthOtp", () => {
 
-	test("requests an SMS OTP (not WhatsApp) and resolves true when Authentica confirms", async () => {
+	test("requests a WhatsApp OTP (not SMS) and resolves true when Authentica confirms", async () => {
 		mockFetch(jsonResponse(true, 200, { success: true }));
 
 		await expect(sendAuthOtp("+966501234567")).resolves.toBe(true);
@@ -36,7 +36,7 @@ describe("sendAuthOtp", () => {
 		expect(url).toBe("https://api.authentica.sa/api/v2/send-otp");
 		expect(options.method).toBe("POST");
 		expect(options.headers["X-Authorization"]).toBe("test-secret-key");
-		expect(JSON.parse(options.body)).toEqual({ method: "sms", phone: "+966501234567" });
+		expect(JSON.parse(options.body)).toEqual({ method: "whatsapp", phone: "+966501234567" });
 	});
 
 	test("resolves false when Authentica responds with an error status", async () => {
