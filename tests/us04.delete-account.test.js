@@ -45,11 +45,13 @@ async function makeUser(name, n) {
 	return User.create({ handleName: name, phoneNumber: `+96655${String(n).padStart(7, "0")}` });
 }
 
+// members join one day apart, in the order given (or at m.joinedAt when set)
 async function makeGroup(name, members) {
+	const start = Date.now() - 30 * 24 * 60 * 60 * 1000;
 	return Group.create({
 		name,
 		createdBy: members.find((m) => m.role === "creator").user._id,
-		members: members.map((m) => ({ user: m.user._id, role: m.role })),
+		members: members.map((m, i) => ({ user: m.user._id, role: m.role, joinedAt: m.joinedAt ?? new Date(start + i * 24 * 60 * 60 * 1000) })),
 	});
 }
 
@@ -185,9 +187,9 @@ describe("POST /api/account/delete/verify — AC-02 (correct code deletes the ac
 		expect(after.roleOf(sara._id)).toBe("creator");
 	});
 
-	test("the creator leaves and another admin becomes the Group Creator (SF-33)", async () => {
+	test("the creator leaves and the member who joined first after them becomes the Group Creator", async () => {
 		const [sara, omar, ali] = [await makeUser("Sara", 1), await makeUser("Omar", 2), await makeUser("Ali", 3)];
-		const group = await makeGroup("Family", [{ user: sara, role: "creator" }, { user: omar, role: "admin" }, { user: ali, role: "member" }]);
+		const group = await makeGroup("Family", [{ user: sara, role: "creator" }, { user: ali, role: "member" }, { user: omar, role: "admin" }]);
 		await sendOtp(sara);
 
 		const res = await confirm(sara);
@@ -195,22 +197,51 @@ describe("POST /api/account/delete/verify — AC-02 (correct code deletes the ac
 		expect(res.body.groups).toEqual({ deleted: 0, transferred: 1, removed: 0 });
 		const after = await Group.findById(group._id);
 		expect(after.roleOf(sara._id)).toBeNull();
-		expect(after.roleOf(omar._id)).toBe("creator");
-		expect(after.roleOf(ali._id)).toBe("member");
-		expect(String(after.createdBy)).toBe(String(omar._id));
+		expect(after.roleOf(ali._id)).toBe("creator");
+		expect(after.roleOf(omar._id)).toBe("admin");
+		expect(String(after.createdBy)).toBe(String(ali._id));
 	});
 
-	test("the only admin leaves, so the group and its list are deleted (SF-34)", async () => {
+	test("the hand-over goes by join date, not by the order members are stored in", async () => {
+		const [sara, omar, ali] = [await makeUser("Sara", 1), await makeUser("Omar", 2), await makeUser("Ali", 3)];
+		const group = await makeGroup("Family", [
+			{ user: sara, role: "creator", joinedAt: new Date("2026-10-01") },
+			{ user: omar, role: "member", joinedAt: new Date("2026-10-20") },
+			{ user: ali, role: "member", joinedAt: new Date("2026-10-05") },
+		]);
+		await sendOtp(sara);
+
+		await confirm(sara);
+
+		const after = await Group.findById(group._id);
+		expect(after.roleOf(ali._id)).toBe("creator");
+		expect(after.roleOf(omar._id)).toBe("member");
+	});
+
+	test("the creator with only regular members: the group is kept and its list stays", async () => {
 		const [sara, ali] = [await makeUser("Sara", 1), await makeUser("Ali", 3)];
 		const group = await makeGroup("Family", [{ user: sara, role: "creator" }, { user: ali, role: "member" }]);
-		await addItem(group, ali);
+		await addItem(group, sara);
 		await sendOtp(sara);
 
 		const res = await confirm(sara);
 
-		expect(res.body.groups).toEqual({ deleted: 1, transferred: 0, removed: 0 });
-		expect(await Group.findById(group._id)).toBeNull();
-		expect(await ListItem.countDocuments({ group: group._id })).toBe(0);
+		expect(res.body.groups).toEqual({ deleted: 0, transferred: 1, removed: 0 });
+		const after = await Group.findById(group._id);
+		expect(after.members).toHaveLength(1);
+		expect(after.roleOf(ali._id)).toBe("creator");
+		expect(await ListItem.countDocuments({ group: group._id })).toBe(1);
+	});
+
+	test("the group has exactly one Group Creator after the hand-over", async () => {
+		const [sara, omar, ali] = [await makeUser("Sara", 1), await makeUser("Omar", 2), await makeUser("Ali", 3)];
+		const group = await makeGroup("Family", [{ user: sara, role: "creator" }, { user: omar, role: "admin" }, { user: ali, role: "member" }]);
+		await sendOtp(sara);
+
+		await confirm(sara);
+
+		const after = await Group.findById(group._id);
+		expect(after.members.filter((m) => m.role === "creator")).toHaveLength(1);
 	});
 
 	test("a group with only the user in it is deleted", async () => {
@@ -234,6 +265,7 @@ describe("POST /api/account/delete/verify — AC-02 (correct code deletes the ac
 
 		expect(res.body.groups).toEqual({ deleted: 1, transferred: 0, removed: 1 });
 		expect((await Group.findById(shared._id)).members).toHaveLength(1);
+		// "Mine" had nobody else in it, so it is the one deleted
 		expect((await Group.findById(other._id)).members).toHaveLength(2);
 		expect(await Group.countDocuments({ "members.user": sara._id })).toBe(0);
 	});

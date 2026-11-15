@@ -17,6 +17,7 @@ const { ROLES } = Group;
 // Step 1  POST /api/account/delete/send-otp  -> sends a WhatsApp OTP to the logged-in user (AC-01)
 // Step 2  POST /api/account/delete/verify    -> { otp, confirmed: true } checks the code and deletes the
 //         account: the user leaves every group, their data and push tokens are removed (AC-02, AC-04).
+//         When they created a group, the member who joined first after them becomes its Group Creator.
 //         A wrong code answers 400 OTP_INCORRECT so the app asks again (AC-03).
 //
 // Same limits as registration (NFR-01): the code is valid for 60 seconds, 5 wrong attempts,
@@ -170,26 +171,30 @@ async function rejectionFor(userId, now) {
 }
 
 
-// Takes the user out of one group, following the leave-group rules (SF-32 to SF-34):
-// - the group is deleted, with its list, when nobody is left or the user was its only admin;
-// - when the Group Creator leaves and other admins remain, one of them becomes the creator at random;
-// - otherwise the user is simply removed.
+// Takes the user out of one group (team decision for US 04):
+// - the group is deleted, with its list, only when nobody else is left in it;
+// - when the Group Creator leaves, the member who joined first after them (any role) becomes the
+//   Group Creator and gets the creator's admin permissions;
+// - anyone else is simply removed.
 // Returns "deleted" | "transferred" | "removed".
 async function leaveGroup(group, userId) {
 
 	const me = String(userId);
 	const role = group.roleOf(me);
 	const remaining = group.members.filter((m) => String(m.user) !== me);
-	const remainingAdmins = remaining.filter((m) => Group.isAdminRole(m.role));
 
-	if (remaining.length === 0 || (Group.isAdminRole(role) && remainingAdmins.length === 0)) {
+	if (remaining.length === 0) {
 		await ListItem.deleteMany({ group: group._id });
 		await Group.deleteOne({ _id: group._id });
 		return "deleted";
 	}
 
 	if (role === ROLES.CREATOR) {
-		const heir = remainingAdmins[Math.floor(Math.random() * remainingAdmins.length)];
+		// earliest joinedAt wins; members without a date (older data) keep their list order
+		const order = remaining.map((m, index) => ({ m, index }));
+		order.sort((a, b) => (new Date(a.m.joinedAt || 0) - new Date(b.m.joinedAt || 0)) || (a.index - b.index));
+		const heir = order[0].m;
+
 		const updated = remaining.map((m) => (String(m.user) === String(heir.user) ? { user: m.user, role: ROLES.CREATOR, joinedAt: m.joinedAt } : m));
 		await Group.updateOne({ _id: group._id }, { $set: { members: updated, createdBy: heir.user } });
 		return "transferred";
