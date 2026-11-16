@@ -4,11 +4,14 @@ const protect = require("../middleware/protected");
 const {createGroup,getMyGroups,addGroupMember,generateGroupInvite,joinGroupByInvite,getGroupMembers} = require("../controllers/groupController");
 const { addListItem, updateListItem } = require("../controllers/listItemController");
 const { getListItems, removeListItem } = require("../controllers/listItemRemoveController");
+const { deleteGroup } = require("../controllers/groupDeleteController");
 
 
 // US 05 — all group routes need a logged-in user
 router.post("/", protect, createGroup);
 router.get("/", protect, getMyGroups);
+// US 08 — the Group Creator deletes the group
+router.delete("/:groupId", protect, deleteGroup);
 // US 06
 router.post("/:groupId/members", protect, addGroupMember);
 router.post("/:groupId/invite", protect, generateGroupInvite);
