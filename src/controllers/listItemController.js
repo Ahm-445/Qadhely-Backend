@@ -197,4 +197,4 @@ const updateListItem = async (req, res) => {
 };
 
 
-module.exports = { addListItem, updateListItem };
+module.exports = { addListItem, updateListItem, quantityError, toListItemResponse };

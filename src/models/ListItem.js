@@ -25,6 +25,8 @@ const ITEM_STATUSES = Object.freeze({
 	PENDING: "pending",
 	FOUND: "found",
 	NOT_FOUND: "notFound",
+	// US 22: the admin replaced this not-found item with another item; kept on the list, crossed out
+	REPLACED: "replaced",
 });
 
 const REPLACEMENT_TEXT_MAX = 100;
@@ -118,6 +120,19 @@ const listItemSchema = new mongoose.Schema({
 		default: null
 	},
 
+	// US 22: on a replaced item, the item that took its place; on the new item, the one it replaced
+	replacedBy: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "ListItem",
+		default: null
+	},
+
+	replacementFor: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "ListItem",
+		default: null
+	},
+
 }, { timestamps: true });
 
 
@@ -147,4 +162,7 @@ module.exports.statusFields = (item) => ({
 	replacementText: item.replacementText ?? null,
 	statusUpdatedBy: item.statusUpdatedBy ? String(item.statusUpdatedBy) : null,
 	statusUpdatedAt: item.statusUpdatedAt ?? null,
+	// US 22
+	replacedBy: item.replacedBy ? String(item.replacedBy) : null,
+	replacementFor: item.replacementFor ? String(item.replacementFor) : null,
 });

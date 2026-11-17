@@ -6,6 +6,7 @@ const { addListItem, updateListItem } = require("../controllers/listItemControll
 const { getListItems, removeListItem } = require("../controllers/listItemRemoveController");
 const { deleteGroup } = require("../controllers/groupDeleteController");
 const { setItemStatus } = require("../controllers/itemStatusController");
+const { replaceListItem } = require("../controllers/itemReplaceController");
 
 
 // US 05 — all group routes need a logged-in user
@@ -28,5 +29,7 @@ router.delete("/:groupId/items/:itemId", protect, removeListItem);
 router.patch("/:groupId/items/:itemId", protect, updateListItem);
 // US 16 — any member marks an item found / not found (with an optional replacement suggestion)
 router.patch("/:groupId/items/:itemId/status", protect, setItemStatus);
+// US 22 — an admin replaces a not-found item with an item from the catalog
+router.post("/:groupId/items/:itemId/replace", protect, replaceListItem);
 
 module.exports = router;
