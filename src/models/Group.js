@@ -66,6 +66,13 @@ inviteToken: {
   	unique: true,
   	sparse: true,
 },
+
+// US 18: when an item was last added to this group's list. The items-added notification uses it
+// to tell "more than 5 minutes since the last addition" (see services/pushNotifications.js).
+// Absent until the first item is added.
+lastItemAddedAt: {
+	type: Date,
+},
 }, {timestamps: true});
 
 

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
+const { notifyItemsAdded } = require("../services/pushNotifications");
 const { UNITS, CATALOG_ITEM_ID_PATTERN, CATALOG_ITEM_ID_MAX } = ListItem;
 const { getCatalogItem } = require("../services/catalog");
 
@@ -21,6 +22,8 @@ function toListItemResponse(item, groupId) {
 		// US 15: the name, image and store the list shows; null for a custom request
 		catalogItem: item.catalogItemId ? getCatalogItem(item.catalogItemId) : null,
 		createdAt: item.createdAt,
+		// US 16: found / not found and the suggested replacement
+		...ListItem.statusFields(item),
 	};
 }
 
@@ -98,6 +101,11 @@ const addListItem = async (req, res) => {
 			unit,
 			addedBy: userId,
 		});
+
+		// US 18: tell the other members if this is the first item in over 5 minutes. Started only now
+		// that the item is saved, and not awaited: it never throws, and a slow or failing push
+		// service must not delay or fail this response.
+		notifyItemsAdded(group._id, userId);
 
 		return res.status(201).json({
 			message: "Item added",
@@ -189,4 +197,4 @@ const updateListItem = async (req, res) => {
 };
 
 
-module.exports = { addListItem, updateListItem };
+module.exports = { addListItem, updateListItem, quantityError, toListItemResponse };

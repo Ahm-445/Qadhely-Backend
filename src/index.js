@@ -16,6 +16,7 @@ const devicesRoute = require("./routes/devicesRoute");
 const groupRoutes = require("./routes/groupRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const catalogRoutes = require("./routes/catalogRoutes");
+const accountRoutes = require("./routes/accountRoutes");
 
 const User = require("./models/User");
 
@@ -58,6 +59,9 @@ app.use("/api/contacts", contactRoutes);
 
 // US 12 — product catalog search
 app.use("/api/catalog", catalogRoutes);
+
+// US 04 — delete account
+app.use("/api/account", accountRoutes);
 
 /*
 // comment once done
