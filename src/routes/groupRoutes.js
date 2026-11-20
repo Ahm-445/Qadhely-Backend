@@ -5,6 +5,7 @@ const {createGroup,getMyGroups,addGroupMember,generateGroupInvite,joinGroupByInv
 const { addListItem, updateListItem } = require("../controllers/listItemController");
 const { getListItems, removeListItem } = require("../controllers/listItemRemoveController");
 const { deleteGroup } = require("../controllers/groupDeleteController");
+const { setItemStatus } = require("../controllers/itemStatusController");
 
 
 // US 05 — all group routes need a logged-in user
@@ -25,5 +26,7 @@ router.get("/:groupId/items", protect, getListItems);
 router.delete("/:groupId/items/:itemId", protect, removeListItem);
 // US 14 — modify an item's quantity and unit
 router.patch("/:groupId/items/:itemId", protect, updateListItem);
+// US 16 — any member marks an item found / not found (with an optional replacement suggestion)
+router.patch("/:groupId/items/:itemId/status", protect, setItemStatus);
 
 module.exports = router;

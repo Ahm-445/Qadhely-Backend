@@ -20,6 +20,15 @@ const UNITS = Object.freeze({
 const CATALOG_ITEM_ID_MAX = 64;
 const CUSTOM_NAME_MAX = 100;
 
+// US 16 — in-store status a group member sets while shopping
+const ITEM_STATUSES = Object.freeze({
+	PENDING: "pending",
+	FOUND: "found",
+	NOT_FOUND: "notFound",
+});
+
+const REPLACEMENT_TEXT_MAX = 100;
+
 // a catalog id is a store slug and a number, e.g. "tamimi-137805"
 const CATALOG_ITEM_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -80,6 +89,35 @@ const listItemSchema = new mongoose.Schema({
 		trim: true
 	},
 
+	// US 16 AC-01 / AC-02: found or not found, shared with the whole group
+	status: {
+		type: String,
+		enum: {
+			values: Object.values(ITEM_STATUSES),
+			message: `Status must be one of ${Object.values(ITEM_STATUSES).join(", ")}`
+		},
+		default: ITEM_STATUSES.PENDING
+	},
+
+	// US 16 AC-03: optional text recommending a replacement, only for a not-found item
+	replacementText: {
+		type: String,
+		trim: true,
+		maxlength: [REPLACEMENT_TEXT_MAX, `Replacement text must be ${REPLACEMENT_TEXT_MAX} characters or less`],
+		default: null
+	},
+
+	statusUpdatedBy: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "User",
+		default: null
+	},
+
+	statusUpdatedAt: {
+		type: Date,
+		default: null
+	},
+
 }, { timestamps: true });
 
 
@@ -100,3 +138,13 @@ module.exports.UNITS = UNITS;
 module.exports.CATALOG_ITEM_ID_PATTERN = CATALOG_ITEM_ID_PATTERN;
 module.exports.CATALOG_ITEM_ID_MAX = CATALOG_ITEM_ID_MAX;
 module.exports.CUSTOM_NAME_MAX = CUSTOM_NAME_MAX;
+module.exports.ITEM_STATUSES = ITEM_STATUSES;
+module.exports.REPLACEMENT_TEXT_MAX = REPLACEMENT_TEXT_MAX;
+
+// US 16: the status fields every item response carries (rows saved before US 16 read as pending)
+module.exports.statusFields = (item) => ({
+	status: item.status ?? ITEM_STATUSES.PENDING,
+	replacementText: item.replacementText ?? null,
+	statusUpdatedBy: item.statusUpdatedBy ? String(item.statusUpdatedBy) : null,
+	statusUpdatedAt: item.statusUpdatedAt ?? null,
+});

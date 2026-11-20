@@ -26,6 +26,8 @@ function toListItemResponse(item) {
 		// US 15: the name, image and store the list shows; null for a custom request
 		catalogItem: item.catalogItemId ? getCatalogItem(item.catalogItemId) : null,
 		createdAt: item.createdAt,
+		// US 16: found / not found and the suggested replacement
+		...ListItem.statusFields(item),
 	};
 }
 
