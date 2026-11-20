@@ -29,6 +29,10 @@ async function showAdminGroups(chatId, user) {
     );
 
     if (adminGroups.length === 0) {
+        user.selectedGroupId = null;
+        user.telegramStep = "idle";
+        await user.save();
+
         return sendTelegramMessage(
             chatId,
             "Your Qadhely account is connected, but you are not an admin of any shopping list."
@@ -36,12 +40,20 @@ async function showAdminGroups(chatId, user) {
     }
 
     if (adminGroups.length === 1) {
+        user.selectedGroupId = adminGroups[0]._id;
+        user.telegramStep = "idle";
+        await user.save();
+
         return sendTelegramMessage(
             chatId,
             `You can manage your shopping list using Qadhely Telegram Bot.\n\nSelected list: ${adminGroups[0].name}`,
             { reply_markup: { remove_keyboard: true } }
         );
     }
+
+    user.selectedGroupId = null;
+    user.telegramStep = "select_group";
+    await user.save();
 
     const keyboard = adminGroups.map((group) => [{
         text: group.name,
@@ -51,16 +63,20 @@ async function showAdminGroups(chatId, user) {
     return sendTelegramMessage(
         chatId,
         "You have more than one shopping list. Please select which group you want to manage:",
-        {
-            reply_markup: {
-                inline_keyboard: keyboard,
-            },
-        }
+        { reply_markup: { inline_keyboard: keyboard } }
     );
 }
 
 router.post("/", async (req, res) => {
     try {
+        // Verify Telegram webhook secret
+        const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+        const receivedSecret = req.get("X-Telegram-Bot-Api-Secret-Token");
+
+        if (!expectedSecret || receivedSecret !== expectedSecret) {
+            return res.sendStatus(401);
+        }
+
         const message = req.body?.message;
         const callback = req.body?.callback_query;
 
@@ -72,7 +88,12 @@ router.post("/", async (req, res) => {
 
             await answerCallbackQuery(callback.id);
 
-            if (!chatId || !fromId || !data.startsWith("group:")) {
+            if (
+                !chatId ||
+                !fromId ||
+                String(chatId) !== String(fromId) ||
+                !data.startsWith("group:")
+            ) {
                 return res.sendStatus(200);
             }
 
@@ -102,6 +123,10 @@ router.post("/", async (req, res) => {
                 );
                 return res.sendStatus(200);
             }
+
+            user.selectedGroupId = group._id;
+            user.telegramStep = "idle";
+            await user.save();
 
             await sendTelegramMessage(
                 chatId,
@@ -165,7 +190,34 @@ router.post("/", async (req, res) => {
                 return res.sendStatus(200);
             }
 
+            // Do not replace an existing Telegram connection
+            if (
+                user.telegramChatId &&
+                user.telegramChatId !== String(chatId)
+            ) {
+                await sendTelegramMessage(
+                    chatId,
+                    "This Qadhely account is already connected to another Telegram account. Please contact support."
+                );
+                return res.sendStatus(200);
+            }
+
+            // Do not allow one Telegram chat to connect to another Qadhely account
+            const existingLink = await User.findOne({
+                telegramChatId: String(chatId),
+                _id: { $ne: user._id },
+            });
+
+            if (existingLink) {
+                await sendTelegramMessage(
+                    chatId,
+                    "This Telegram account is already connected to another Qadhely account."
+                );
+                return res.sendStatus(200);
+            }
+
             user.telegramChatId = String(chatId);
+            user.telegramStep = "idle";
             await user.save();
 
             await sendTelegramMessage(
@@ -185,7 +237,16 @@ router.post("/", async (req, res) => {
             });
 
             if (user) {
-                await showAdminGroups(chatId, user);
+                if (user.telegramStep === "select_group") {
+                    await showAdminGroups(chatId, user);
+                } else if (user.selectedGroupId) {
+                    await sendTelegramMessage(
+                        chatId,
+                        "Your selected shopping list is saved. More commands will be available soon."
+                    );
+                } else {
+                    await showAdminGroups(chatId, user);
+                }
             } else {
                 await sendTelegramMessage(
                     chatId,
