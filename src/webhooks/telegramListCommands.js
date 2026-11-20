@@ -5,6 +5,7 @@ const { UNITS } = ListItem;
 const { getCatalogItem } = require("../services/catalog");
 const { quantityError } = require("../controllers/listItemController");
 const { sendTelegramMessage } = require("../services/telegramService");
+const { orderItems } = require("../services/telegramItems");
 
 // US 28 — remove an item, and US 29 — modify an item's quantity and unit, from Telegram.
 // The admin sends /remove or /modify, picks an item by its number, and (US 29) sends the new
@@ -62,8 +63,9 @@ function parseQuantityAndUnit(text) {
 
 // shortcut: the list is read again for every reply, so an item added or removed in the app between
 // showing the list and picking a number shifts the numbers; store the shown ids if that happens in practice
-function loadItems(groupId) {
-    return ListItem.find({ group: groupId }).sort({ createdAt: -1 }).lean();
+// the same order as /items (US 27), so a number means the same item in both
+async function loadItems(groupId) {
+    return orderItems(await ListItem.find({ group: groupId }).lean());
 }
 
 async function resetFlow(user) {

@@ -283,7 +283,7 @@ router.post("/", async (req, res) => {
                     if (!(await handleListCommand(chatId, user, text))) {
                         await sendTelegramMessage(
                             chatId,
-                            "Your selected shopping list is saved.\n\nSend /remove to remove an item or /modify to change an item's quantity and unit."
+                            "Your selected shopping list is saved.\n\nSend /items to see the list, /group to change the list, /remove to remove an item or /modify to change an item's quantity and unit."
                         );
                     }
                 } else {

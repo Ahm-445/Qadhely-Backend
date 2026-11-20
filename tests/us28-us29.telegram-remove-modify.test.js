@@ -160,6 +160,21 @@ describe("US 28 — remove an item from Telegram", () => {
 		expect(await ListItem.countDocuments({})).toBe(2);
 	});
 
+	test("a replaced item is numbered last, as in /items (US 27)", async () => {
+		const { bread, tortilla } = await setup();
+		await ListItem.updateOne({ _id: bread._id }, { status: "replaced" });
+
+		await send("/remove");
+		expect(lastReply()).toContain("3. Homemade bread");
+
+		await send("/items");
+		expect(lastReply()).toMatch(/3\. .*Homemade bread/);
+
+		await send("/remove");
+		await send("1");
+		expect(await ListItem.findById(tortilla._id)).toBeNull();
+	});
+
 	test("Arabic digits pick an item too", async () => {
 		const { bread } = await setup();
 
@@ -287,7 +302,7 @@ describe("who can remove or modify", () => {
 
 		await send("hello");
 
-		expect(lastReply()).toContain("Send /remove to remove an item or /modify");
+		expect(lastReply()).toContain("Send /items to see the list, /group to change the list, /remove to remove an item or /modify");
 	});
 
 });
