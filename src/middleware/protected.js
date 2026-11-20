@@ -14,16 +14,12 @@ const protect = (req, res, next) => {
 					// array containting ["Bearer", <token>]
 	const token = authHeader.split(" ") [1];
 
-	console.log(token);
-
 	// check if token is valid
 	try {
 		
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
 		const user = decoded;
-
-		console.log(user);
 
 		req.user = user;
 

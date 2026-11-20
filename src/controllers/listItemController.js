@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { notifyItemsAdded } = require("../services/pushNotifications");
+const { recordAddition } = require("../services/itemHistory");
 const { UNITS, CATALOG_ITEM_ID_PATTERN, CATALOG_ITEM_ID_MAX } = ListItem;
 const { getCatalogItem } = require("../services/catalog");
 
@@ -101,6 +102,9 @@ const addListItem = async (req, res) => {
 			unit,
 			addedBy: userId,
 		});
+
+		// the append-only history the AI suggestions read: this item was added, with no trip yet
+		await recordAddition(item);
 
 		// US 18: tell the other members if this is the first item in over 5 minutes. Started only now
 		// that the item is saved, and not awaited: it never throws, and a slow or failing push

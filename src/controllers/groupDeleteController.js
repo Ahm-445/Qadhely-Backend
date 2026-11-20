@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
+const ItemHistory = require("../models/ItemHistory");
 
 const { ROLES } = Group;
 
@@ -54,7 +55,10 @@ const deleteGroup = async (req, res) => {
 			return res.status(404).json({ error: "Group not found." });
 		}
 
-		await ListItem.deleteMany({ group: group._id });
+		await Promise.all([
+			ListItem.deleteMany({ group: group._id }),
+			ItemHistory.deleteMany({ group: group._id }),
+		]);
 
 		return res.status(200).json({
 			message: "Group deleted",

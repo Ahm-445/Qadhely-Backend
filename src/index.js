@@ -4,8 +4,6 @@ const PORT = process.env.PORT || 3000;
 const IP_ADDRESS = process.env.LOCAL_IP || "localhost";
 
 const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -38,14 +36,6 @@ app.use(corsMiddleware);
 app.use(express.json());
 
 app.use(morgan("dev"));
-
-
-
-
-const AUTHENTICA_URL = "https://api.authentica.sa/api/v2";
-const OTP_METHOD = "whatsapp";
-
-
 
 // to auth routes 
 app.use("/api/auth", authRoutes);
