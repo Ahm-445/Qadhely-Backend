@@ -10,6 +10,7 @@ const {
     sendTelegramMessage,
     answerCallbackQuery,
 } = require("../services/telegramService");
+const { handleListCommand } = require("./telegramListCommands");
 
 const contactKeyboard = {
     keyboard: [
@@ -240,10 +241,13 @@ router.post("/", async (req, res) => {
                 if (user.telegramStep === "select_group") {
                     await showAdminGroups(chatId, user);
                 } else if (user.selectedGroupId) {
-                    await sendTelegramMessage(
-                        chatId,
-                        "Your selected shopping list is saved. More commands will be available soon."
-                    );
+                    // US 28, US 29: /remove, /modify, /cancel and their steps
+                    if (!(await handleListCommand(chatId, user, text))) {
+                        await sendTelegramMessage(
+                            chatId,
+                            "Your selected shopping list is saved.\n\nSend /remove to remove an item or /modify to change an item's quantity and unit."
+                        );
+                    }
                 } else {
                     await showAdminGroups(chatId, user);
                 }
