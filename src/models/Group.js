@@ -73,6 +73,13 @@ inviteToken: {
 lastItemAddedAt: {
 	type: Date,
 },
+
+// US 21: set when the "list completed" notification went out for the list's current completion;
+// cleared again when the list is reopened (see services/pushNotifications.js).
+listCompletedNotifiedAt: {
+	type: Date,
+	default: null,
+},
 }, {timestamps: true});
 
 

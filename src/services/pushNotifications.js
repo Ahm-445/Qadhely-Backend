@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Group = require("../models/Group");
+const ListItem = require("../models/ListItem");
 
 
 // Expo push service. The app registers "ExponentPushToken[...]" tokens through POST /api/devices
@@ -11,6 +12,10 @@ const EXPO_TIMEOUT_MS = 10000;
 // the Android channel the app creates (services/pushNotifications.ts in the app)
 const ANDROID_CHANNEL_ID = "default";
 
+// US 21: the roles that get "list completed" (the Group Creator has admin privileges)
+const ADMIN_ROLES = [Group.ROLES.CREATOR, Group.ROLES.ADMIN];
+const { ITEM_STATUSES } = ListItem;
+
 // only well-formed Expo tokens are sent to; anything else would just come back as an error
 const EXPO_TOKEN_PATTERN = /^(Exponent|Expo)PushToken\[.+\]$/;
 
@@ -20,7 +25,12 @@ const ITEMS_ADDED_WINDOW_MS = 5 * 60 * 1000;
 
 const NOTIFICATION_TYPES = Object.freeze({
 	ITEMS_ADDED: "items_added",
+	LIST_COMPLETED: "list_completed",
 });
+
+// US 21: a replacement is created a moment after the item it replaces is marked "replaced". Within
+// this long, a replaced item whose replacement is not there yet counts as still open.
+const REPLACEMENT_GRACE_MS = 30 * 1000;
 
 
 // Notification jobs run after the request that started them has been answered. They are tracked
@@ -114,16 +124,20 @@ async function sendToExpo(messages) {
  *
  * `data` is what travels with the notification (the app reads it when the notification is
  * tapped). Pass a function to build it per recipient from the member ({ user, role }).
+ * `roles` (optional) limits the recipients to members with one of those roles; by default every
+ * member is a recipient.
  *
  * Tokens are deduplicated, and tokens Expo reports as DeviceNotRegistered are removed from the
  * users who held them. Never throws: a failed notification must not fail the request behind it.
  * `group` is a plain object: { name, members: [{ user, role }] }.
  */
-async function notifyGroupMembers(group, actorId, { title, body, data }) {
+async function notifyGroupMembers(group, actorId, { title, body, data, roles }) {
 
 	try {
 
-		const recipients = (group.members || []).filter((member) => String(member.user) !== String(actorId));
+		const recipients = (group.members || []).filter((member) =>
+			String(member.user) !== String(actorId) && (!roles || roles.includes(member.role))
+		);
 
 		if (recipients.length === 0) return { messages: 0, deadTokens: 0 };
 
@@ -250,8 +264,129 @@ function notifyItemsAdded(groupId, actorId, now = new Date()) {
 }
 
 
+/**
+ * US 21: the list is complete when it has at least one found item and every item is either found
+ * or replaced (a replaced item is resolved; its replacement is an item of its own and has to be
+ * found too). Pending, not-found and old status-less items keep it open, and so does an empty list.
+ */
+async function isListComplete(groupId, now = new Date()) {
+
+	const items = await ListItem.find({ group: groupId }).select("status replacedBy statusUpdatedAt").lean();
+	const ids = new Set(items.map((item) => String(item._id)));
+
+	let found = 0;
+
+	for (const item of items) {
+
+		if (item.status === ITEM_STATUSES.FOUND) {
+			found += 1;
+			continue;
+		}
+
+		if (item.status !== ITEM_STATUSES.REPLACED) return false;
+
+		// replaced a moment ago and the replacement has not been saved yet: not resolved
+		const replacementMissing = !item.replacedBy || !ids.has(String(item.replacedBy));
+		const recent = !item.statusUpdatedAt || now.getTime() - new Date(item.statusUpdatedAt).getTime() < REPLACEMENT_GRACE_MS;
+
+		if (replacementMissing && recent) return false;
+	}
+
+	return found > 0;
+}
+
+
+/**
+ * US 21: the list is no longer complete (an item was added, replaced or marked again), so the next
+ * completion may notify again. Call it after the change has been saved. Never throws.
+ */
+async function resetListCompleted(groupId) {
+
+	try {
+		await Group.updateOne(
+			{ _id: groupId, listCompletedNotifiedAt: { $ne: null } },
+			{ $set: { listCompletedNotifiedAt: null } },
+			{ timestamps: false }
+		);
+	}
+	catch (err) {
+		console.error("Failed to reset the list-completed marker:", err.message);
+	}
+}
+
+
+async function runListCompleted(groupId, now) {
+
+	let claimed = false;
+
+	try {
+
+		if (!(await isListComplete(groupId, now))) return { eligible: false, messages: 0, deadTokens: 0 };
+
+		// One atomic step claims this completion: of several final marks at once only one finds the
+		// marker empty. The marker is cleared again by every change that reopens the list.
+		const group = await Group.findOneAndUpdate(
+			{ _id: groupId, listCompletedNotifiedAt: null },
+			{ $set: { listCompletedNotifiedAt: now } },
+			{ returnDocument: "after", projection: "name members", lean: true, timestamps: false }
+		);
+
+		if (!group) return { eligible: false, messages: 0, deadTokens: 0 };
+
+		claimed = true;
+
+		// a change that reopened the list between the first check and the claim may have cleared the
+		// marker before we set it: look again, and give the claim back if the list is open
+		if (!(await isListComplete(groupId, now))) {
+			await Group.updateOne({ _id: groupId, listCompletedNotifiedAt: now }, { $set: { listCompletedNotifiedAt: null } }, { timestamps: false });
+			return { eligible: false, messages: 0, deadTokens: 0 };
+		}
+
+		const memberCount = group.members.length;
+
+		const result = await notifyGroupMembers(group, null, {
+			title: group.name,
+			body: "The shopping list is completed.",
+			roles: ADMIN_ROLES,
+			data: (member) => ({
+				type: NOTIFICATION_TYPES.LIST_COMPLETED,
+				groupId: String(group._id),
+				groupName: group.name,
+				myRole: member.role,
+				memberCount,
+			}),
+		});
+
+		return { eligible: true, ...result };
+
+	}
+	catch (err) {
+		console.error("Failed to process the list-completed notification:", err.message);
+
+		if (claimed) {
+			await Group.updateOne({ _id: groupId, listCompletedNotifiedAt: now }, { $set: { listCompletedNotifiedAt: null } }, { timestamps: false }).catch(() => {});
+		}
+
+		return { eligible: false, messages: 0, deadTokens: 0, failed: true };
+	}
+}
+
+
+/**
+ * US 21: call this after an item has been marked found. If that completed the list, the group's
+ * creator and admins (the person who marked it included) are told once. Never rejects, so the
+ * caller can start it without waiting. `now` is only for tests.
+ */
+function notifyListCompleted(groupId, now = new Date()) {
+	return track(runListCompleted(groupId, now));
+}
+
+
 module.exports = {
 	notifyItemsAdded,
+	notifyListCompleted,
+	resetListCompleted,
+	isListComplete,
 	notifyGroupMembers,
 	isItemsAddedNotificationDue,
 	whenNotificationsIdle,

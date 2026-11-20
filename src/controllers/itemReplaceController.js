@@ -4,6 +4,7 @@ const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { quantityError, toListItemResponse } = require("./listItemController");
 const { getCatalogItem } = require("../services/catalog");
+const { resetListCompleted } = require("../services/pushNotifications");
 
 const { UNITS, ITEM_STATUSES } = ListItem;
 
@@ -116,6 +117,9 @@ const replaceListItem = async (req, res) => {
 			);
 			throw err;
 		}
+
+		// US 21: the replacement is a new pending item
+		await resetListCompleted(group._id);
 
 		return res.status(201).json({
 			message: "Item replaced",
