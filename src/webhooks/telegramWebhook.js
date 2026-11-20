@@ -10,6 +10,7 @@ const {
     sendTelegramMessage,
     answerCallbackQuery,
 } = require("../services/telegramService");
+const { handleListCommand } = require("./telegramListCommands");
 
 // US 27: /items and /group
 const { isItemsCommand, isGroupCommand, buildItemsReply } = require("../services/telegramItems");
@@ -278,10 +279,13 @@ router.post("/", async (req, res) => {
                 if (user.telegramStep === "select_group") {
                     await showAdminGroups(chatId, user);
                 } else if (user.selectedGroupId) {
-                    await sendTelegramMessage(
-                        chatId,
-                        "Your selected shopping list is saved. More commands will be available soon."
-                    );
+                    // US 28, US 29: /remove, /modify, /cancel and their steps
+                    if (!(await handleListCommand(chatId, user, text))) {
+                        await sendTelegramMessage(
+                            chatId,
+                            "Your selected shopping list is saved.\n\nSend /items to see the list, /group to change the list, /remove to remove an item or /modify to change an item's quantity and unit."
+                        );
+                    }
                 } else {
                     await showAdminGroups(chatId, user);
                 }

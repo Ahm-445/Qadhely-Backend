@@ -242,6 +242,7 @@ module.exports = {
 	buildItemsReply,
 	formatItemMessages,
 	findAdminGroup,
+	orderItems,
 	MAX_MESSAGE_CHARS,
 	MAX_MESSAGES,
 };

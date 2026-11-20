@@ -37,6 +37,20 @@ const userSchema = new mongoose.Schema(
             default: "idle"
         },
 
+        // US 28, US 29: which Telegram flow the steps above belong to
+        telegramAction: {
+            type: String,
+            enum: ["remove", "modify", null],
+            default: null
+        },
+
+        // US 29: the item picked for modifying, while its new quantity is asked for
+        telegramItemId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "ListItem",
+            default: null
+        },
+
         pushTokens: {
             type: [String],
             default: []
