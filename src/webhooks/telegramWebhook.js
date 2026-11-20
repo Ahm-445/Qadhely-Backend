@@ -11,6 +11,9 @@ const {
     answerCallbackQuery,
 } = require("../services/telegramService");
 
+// US 27: /items and /group
+const { isItemsCommand, isGroupCommand, buildItemsReply } = require("../services/telegramItems");
+
 const contactKeyboard = {
     keyboard: [
         [{ text: "Share my phone number", request_contact: true }],
@@ -154,6 +157,41 @@ router.post("/", async (req, res) => {
                 "Welcome to Qadhely!\n\nTo connect your account and access your shopping lists, please share your phone number using the button below.",
                 { reply_markup: contactKeyboard }
             );
+
+            return res.sendStatus(200);
+        }
+
+        // US 27: /items shows the items of the selected list, /group reopens the group picker.
+        // Both are for linked users only: the user is found by the chat the message came from.
+        if (isItemsCommand(text) || isGroupCommand(text)) {
+            const user = await User.findOne({
+                telegramChatId: String(chatId),
+            });
+
+            if (!user) {
+                await sendTelegramMessage(
+                    chatId,
+                    "Please send /start to connect your Qadhely account first."
+                );
+                return res.sendStatus(200);
+            }
+
+            if (isGroupCommand(text)) {
+                // the same picker US 25 shows: it lists only the groups the user is creator or admin of
+                await showAdminGroups(chatId, user);
+                return res.sendStatus(200);
+            }
+
+            const reply = await buildItemsReply(user);
+
+            if (reply.kind === "items") {
+                for (const part of reply.messages) {
+                    await sendTelegramMessage(chatId, part);
+                }
+            } else {
+                await sendTelegramMessage(chatId, reply.text);
+                await showAdminGroups(chatId, user);
+            }
 
             return res.sendStatus(200);
         }
