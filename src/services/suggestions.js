@@ -11,8 +11,13 @@ const { getCatalogItem } = require("./catalog");
 // ml/features.py is the other half of the same specification (section 5 of the plan). The two must
 // compute identical features; tests/us23.suggestions.parity.test.js checks this against
 // ml/out/parity_fixture.json. Change one side and the other together.
+//
+// ml/train.py writes the model twice: ml/out/model.json for the report, and the copy next to this file
+// that the server loads. The copy lives inside src/ so the server still starts when src/ is deployed
+// on its own; the parity test checks that the two copies are identical. Never edit either copy by hand:
+// change and re-run ml/train.py, which writes both.
 
-const MODEL = require("../../ml/out/model.json");
+const MODEL = require("./suggestions.model.json");
 
 const DAY_MS = 86_400_000;
 
@@ -223,26 +228,27 @@ async function getSuggestions(groupId, { now = Date.now(), model = MODEL } = {})
 	// an item already on the list is not a suggestion
 	const onList = new Set(list.map((item) => item.catalogItemId).filter(Boolean));
 
+	// a suggestion the admin cannot add through POST /items would be a dead end, so an item missing from
+	// the catalog is dropped before the top maxSuggestions are taken, and the next best one takes its place
 	const ranked = candidateFeatures(past, now, model.fallbackMedianInterval)
 		.filter((candidate) => !onList.has(candidate.catalogItemId))
-		.map((candidate) => ({ ...candidate, probability: score(candidate.features, model) }))
-		.filter((candidate) => candidate.probability >= model.threshold)
+		.map((candidate) => ({
+			...candidate,
+			catalogItem: getCatalogItem(candidate.catalogItemId),
+			probability: score(candidate.features, model),
+		}))
+		.filter((candidate) => candidate.catalogItem && candidate.probability >= model.threshold)
 		.sort((a, b) => b.probability - a.probability || compareText(a.catalogItemId, b.catalogItemId))
 		.slice(0, model.maxSuggestions);
 
 	const suggestions = [];
 
 	for (const candidate of ranked) {
-		const catalogItem = getCatalogItem(candidate.catalogItemId);
-
-		// a suggestion the admin cannot add through POST /items would be a dead end
-		if (!catalogItem) continue;
-
 		const sizing = usualSizing(trips, candidate.catalogItemId);
 
 		suggestions.push({
 			catalogItemId: candidate.catalogItemId,
-			catalogItem,
+			catalogItem: candidate.catalogItem,
 			probability: Number(candidate.probability.toFixed(4)),
 			reason: reasonFor(candidate.features),
 			suggestedQuantity: sizing.quantity,

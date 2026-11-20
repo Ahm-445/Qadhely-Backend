@@ -1,9 +1,14 @@
 // AI suggestions — criterion 3: at least 80% of the suggestions were really on the next list.
 //
-// The fixture ml/generate_data.py wrote is a household the model never trained on: its first completed
-// trips, and the big shop that came next. The test seeds that history, asks for suggestions, adds every
-// suggestion the way the AI suggestions tab does, and then compares them with the shop that really
-// happened. That is the precision the user experiences: how often a suggested item was actually bought.
+// ml/generate_data.py writes ml/out/criterion3_households.json: ten households the model never trained
+// on, each with its first completed trips and the big shop that came next. For every household the test
+// seeds that history in its own group, asks for suggestions, adds every suggestion the way the AI
+// suggestions tab does, and completes the list. It then compares the suggestions with the shop that
+// really happened.
+//
+// The precision is pooled over all households (suggested items that were bought ÷ suggested items),
+// so one unusual household cannot decide the result on its own. A single household with eight
+// suggestions fails on its second miss; ten households together leave a real margin.
 //
 // Run from src/:  npm test -- us23.suggestions.precision
 
@@ -22,7 +27,7 @@ const User = require("../src/models/User");
 const Group = require("../src/models/Group");
 const ListItem = require("../src/models/ListItem");
 const ItemHistory = require("../src/models/ItemHistory");
-const fixture = require("../ml/out/criterion3_fixture.json");
+const { households } = require("../ml/out/criterion3_households.json");
 
 const DAY_MS = 86_400_000;
 const MINUTE_MS = 60_000;
@@ -53,14 +58,18 @@ const complete = (groupId, user) =>
 	request(app).post(`/api/groups/${groupId}/complete-list`).set("Authorization", tokenFor(user)).send();
 
 
-async function setup() {
-	const [creator, admin] = await User.insertMany([
+async function setupUsers() {
+	return User.insertMany([
 		{ handleName: "Sara", phoneNumber: "+966550000001" },
 		{ handleName: "Omar", phoneNumber: "+966550000002" },
 	]);
+}
 
+
+// one group per household, with the household's completed trips in its item history
+async function seedHousehold(household, creator, admin) {
 	const group = await Group.create({
-		name: "Family groceries",
+		name: household.group,
 		createdBy: creator._id,
 		members: [
 			{ user: creator._id, role: "creator" },
@@ -71,7 +80,7 @@ async function setup() {
 	const now = Date.now();
 	const rows = [];
 
-	for (const trip of fixture.trips) {
+	for (const trip of household.trips) {
 		const completed = now - Math.round(trip.daysBeforeNow * DAY_MS);
 		const tripId = new mongoose.Types.ObjectId();
 
@@ -92,7 +101,49 @@ async function setup() {
 
 	await ItemHistory.insertMany(rows);
 
-	return { creator, admin, group };
+	return group;
+}
+
+
+// the admin asks for suggestions, adds every one of them and completes the list
+async function shop(household, group, admin) {
+	const response = await suggestions(group._id, admin);
+
+	expect(response.status).toBe(200);
+	expect(response.body.code).toBeNull();
+
+	for (const suggestion of response.body.suggestions) {
+		const added = await addItem(group._id, admin, {
+			catalogItemId: suggestion.catalogItemId,
+			quantity: suggestion.suggestedQuantity,
+			unit: suggestion.suggestedUnit,
+		});
+
+		expect(added.status).toBe(201);
+	}
+
+	const onList = await ListItem.find({ group: group._id }).lean();
+	expect(onList).toHaveLength(response.body.suggestions.length);
+
+	if (onList.length > 0) {
+		for (const item of onList) {
+			const marked = await setStatus(group._id, item._id, admin);
+			expect(marked.status).toBe(200);
+		}
+
+		const completed = await complete(group._id, admin);
+		expect(completed.status).toBe(200);
+
+		// the completed list became one more trip in the history, so the next request has more to learn from
+		const trips = await ItemHistory.distinct("tripId", { group: group._id, tripId: { $ne: null } });
+		expect(trips).toHaveLength(household.trips.length + 1);
+	}
+
+	// what the household really bought next
+	const bought = new Set(household.nextTrip);
+	const suggested = response.body.suggestions.map((suggestion) => suggestion.catalogItemId);
+
+	return { group: household.group, suggested: suggested.length, hits: suggested.filter((id) => bought.has(id)).length };
 }
 
 
@@ -116,47 +167,27 @@ beforeEach(async () => {
 });
 
 
-test("at least 80% of the suggested items were on the next list", async () => {
-	const { admin, group } = await setup();
+test("the fixture holds several held-out households", () => {
+	expect(households.length).toBeGreaterThanOrEqual(10);
+	expect(new Set(households.map((household) => household.group)).size).toBe(households.length);
+});
 
-	const response = await suggestions(group._id, admin);
 
-	expect(response.status).toBe(200);
-	expect(response.body.code).toBeNull();
-	expect(response.body.suggestions.length).toBeGreaterThan(0);
+test("at least 80% of the suggested items were on the next list, over all households", async () => {
+	const [creator, admin] = await setupUsers();
+	const results = [];
 
-	// the admin accepts every suggestion, through the same endpoint the tab uses
-	for (const suggestion of response.body.suggestions) {
-		const added = await addItem(group._id, admin, {
-			catalogItemId: suggestion.catalogItemId,
-			quantity: suggestion.suggestedQuantity,
-			unit: suggestion.suggestedUnit,
-		});
-
-		expect(added.status).toBe(201);
+	for (const household of households) {
+		const group = await seedHousehold(household, creator, admin);
+		results.push(await shop(household, group, admin));
 	}
 
-	const onList = await ListItem.find({ group: group._id }).lean();
-	expect(onList).toHaveLength(response.body.suggestions.length);
+	const suggested = results.reduce((sum, result) => sum + result.suggested, 0);
+	const hits = results.reduce((sum, result) => sum + result.hits, 0);
 
-	for (const item of onList) {
-		const marked = await setStatus(group._id, item._id, admin);
-		expect(marked.status).toBe(200);
-	}
+	// most households get suggestions; a household with no confident candidate gets none, which is allowed
+	expect(results.filter((result) => result.suggested > 0).length).toBeGreaterThanOrEqual(households.length / 2);
+	expect(suggested).toBeGreaterThan(0);
 
-	const completed = await complete(group._id, admin);
-	expect(completed.status).toBe(200);
-
-	// what the household really bought next
-	const bought = new Set(fixture.nextTrip);
-	const suggested = response.body.suggestions.map((suggestion) => suggestion.catalogItemId);
-	const hits = suggested.filter((catalogItemId) => bought.has(catalogItemId));
-
-	const precision = hits.length / suggested.length;
-
-	expect(precision).toBeGreaterThanOrEqual(REQUIRED_PRECISION);
-
-	// the completed list became one more trip in the history, so the next request has more to learn from
-	const trips = await ItemHistory.distinct("tripId", { group: group._id, tripId: { $ne: null } });
-	expect(trips).toHaveLength(fixture.trips.length + 1);
+	expect(hits / suggested).toBeGreaterThanOrEqual(REQUIRED_PRECISION);
 });

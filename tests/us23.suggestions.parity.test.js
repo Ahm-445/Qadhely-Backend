@@ -9,6 +9,7 @@
 
 const { candidateFeatures, tripRows, score, MODEL } = require("../src/services/suggestions");
 const fixture = require("../ml/out/parity_fixture.json");
+const trainedModel = require("../ml/out/model.json");
 
 const TOLERANCE = 1e-6;
 
@@ -19,6 +20,11 @@ const byId = new Map(candidates.map((candidate) => [candidate.catalogItemId, can
 
 
 describe("the model file and the fixture belong together", () => {
+
+	test("the server loads the same model train.py wrote", () => {
+		// src/services/suggestions.model.json is the copy inside src/; ml/out/model.json is the original
+		expect(MODEL).toEqual(trainedModel);
+	});
 
 	test("the fixture was written by the model that is loaded", () => {
 		expect(fixture.modelVersion).toBe(MODEL.version);

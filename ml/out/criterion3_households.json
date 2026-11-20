@@ -1,0 +1,2307 @@
+{
+  "note": "Households the model never trains on, each with its history and the shop that came next. The criterion 3 test checks the precision of the suggestions over all of them together.",
+  "households": [
+    {
+      "group": "fixture-criterion3",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 29.980696,
+          "items": [
+            {
+              "catalogItemId": "panda-15920",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-155510",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10677",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-135965",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-134998",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-118617",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-193753",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-143249",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42892",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-118615",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-155661",
+              "quantity": 1.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16322",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-182148",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 23.065558,
+          "items": [
+            {
+              "catalogItemId": "panda-155510",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10677",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-135965",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-118617",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42892",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-118615",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-155661",
+              "quantity": 1.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16322",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42891",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 13.843877,
+          "items": [
+            {
+              "catalogItemId": "panda-155510",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10677",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-135965",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-134998",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-118617",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-193753",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-143249",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42892",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-118615",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-155661",
+              "quantity": 1.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16322",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42891",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 10.543455,
+          "items": [
+            {
+              "catalogItemId": "panda-155510",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-135965",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42892",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16322",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "panda-15920",
+        "panda-155510",
+        "panda-10677",
+        "tamimi-135965",
+        "tamimi-134998",
+        "tamimi-118617",
+        "tamimi-193753",
+        "panda-143249",
+        "panda-42892",
+        "tamimi-118615",
+        "panda-155661",
+        "tamimi-1194"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h01",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 59.854319,
+          "items": [
+            {
+              "catalogItemId": "tamimi-137244",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194524",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194523",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-181487",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152235",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16107",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 52.114698,
+          "items": [
+            {
+              "catalogItemId": "tamimi-137244",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194524",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-152235",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43147",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 42.965045,
+          "items": [
+            {
+              "catalogItemId": "tamimi-137244",
+              "quantity": 2,
+              "unit": "box",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-194524",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152235",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-124624",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 39.654175,
+          "items": [
+            {
+              "catalogItemId": "tamimi-194523",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-24440",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 35.02195,
+          "items": [
+            {
+              "catalogItemId": "tamimi-137244",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194524",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-181487",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152235",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 25.675995,
+          "items": [
+            {
+              "catalogItemId": "tamimi-137244",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194524",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152235",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 22.427286,
+          "items": [
+            {
+              "catalogItemId": "tamimi-194523",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-143908",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 13.833119,
+          "items": [
+            {
+              "catalogItemId": "tamimi-137244",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194524",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152235",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 6.497964,
+          "items": [
+            {
+              "catalogItemId": "tamimi-181487",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-124506",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16107",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "tamimi-137244",
+        "tamimi-194524",
+        "tamimi-194523",
+        "tamimi-152235",
+        "tamimi-124506",
+        "tamimi-1116072",
+        "panda-124624",
+        "panda-42048"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h02",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 23.628123,
+          "items": [
+            {
+              "catalogItemId": "tamimi-193753",
+              "quantity": 1.5,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42096",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43283",
+              "quantity": 1.0,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194698",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-26767",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-29137",
+              "quantity": 2.5,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-187029",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-161575",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21613",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-157093",
+              "quantity": 2.6,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1827",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-128359",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-45593",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-188076",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-137442",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 18.157347,
+          "items": [
+            {
+              "catalogItemId": "tamimi-193753",
+              "quantity": 1.5,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-187029",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1827",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-137442",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 7.939948,
+          "items": [
+            {
+              "catalogItemId": "tamimi-193753",
+              "quantity": 1.5,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42096",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194698",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-26767",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-29137",
+              "quantity": 2.5,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-187029",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-157093",
+              "quantity": 2.6,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1827",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "tamimi-193753",
+        "panda-43283",
+        "panda-29137",
+        "tamimi-187029",
+        "panda-161575",
+        "panda-21613",
+        "tamimi-1827",
+        "panda-128359",
+        "panda-21971",
+        "tamimi-194152"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h03",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 67.390518,
+          "items": [
+            {
+              "catalogItemId": "tamimi-139637",
+              "quantity": 1.6,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-18000",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-124231",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-11154",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-22884",
+              "quantity": 0.7,
+              "unit": "kg",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 59.052282,
+          "items": [
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-124231",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-20537",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 53.158052,
+          "items": [
+            {
+              "catalogItemId": "panda-11154",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-127176",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "notFound"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 47.302779,
+          "items": [
+            {
+              "catalogItemId": "panda-18000",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-124231",
+              "quantity": 3,
+              "unit": "box",
+              "status": "notFound"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 40.999269,
+          "items": [
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-11154",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22884",
+              "quantity": 0.7,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-179909",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 34.027979,
+          "items": [
+            {
+              "catalogItemId": "tamimi-139637",
+              "quantity": 1.6,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-124231",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-193753",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 29.893051,
+          "items": [
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-11154",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 23.795782,
+          "items": [
+            {
+              "catalogItemId": "panda-18000",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-124231",
+              "quantity": 3,
+              "unit": "box",
+              "status": "notFound"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 19.755436,
+          "items": [
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-11154",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43214",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-127176",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 15.52773,
+          "items": [
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-124231",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-11154",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22884",
+              "quantity": 0.7,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43214",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 10.544484,
+          "items": [
+            {
+              "catalogItemId": "tamimi-154868",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10684",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "tamimi-139637",
+        "panda-18000",
+        "tamimi-154868",
+        "panda-10684",
+        "panda-124231",
+        "panda-11154",
+        "panda-43214"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h04",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 17.686179,
+          "items": [
+            {
+              "catalogItemId": "panda-126559",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-180053",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21672",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-14197",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42053",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1110196",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-15521",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194250",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-17999",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43199",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1112509",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 10.330894,
+          "items": [
+            {
+              "catalogItemId": "panda-126559",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21672",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-14197",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-15521",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-194250",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43199",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1112509",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22785",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10655",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 7.219834,
+          "items": [
+            {
+              "catalogItemId": "panda-126559",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-180053",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42053",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116072",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43199",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "panda-126559",
+        "tamimi-180053",
+        "panda-21672",
+        "panda-14197",
+        "panda-42053",
+        "tamimi-1110196",
+        "tamimi-15521",
+        "tamimi-194250",
+        "panda-43199"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h05",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 28.612922,
+          "items": [
+            {
+              "catalogItemId": "panda-44488",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-138445",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152241",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16182",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1111778",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-39364",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22033",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1114085",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "notFound"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 23.312234,
+          "items": [
+            {
+              "catalogItemId": "panda-138445",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1111778",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-39364",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22033",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 19.484322,
+          "items": [
+            {
+              "catalogItemId": "panda-138445",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16182",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-39364",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1114085",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-43387",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 14.358213,
+          "items": [
+            {
+              "catalogItemId": "panda-44488",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-138445",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1111778",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-39364",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22033",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-45047",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 9.119801,
+          "items": [
+            {
+              "catalogItemId": "panda-138445",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152241",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16182",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22033",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "notFound"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 5.867226,
+          "items": [
+            {
+              "catalogItemId": "tamimi-1111778",
+              "quantity": 0.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-39364",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1114085",
+              "quantity": 2.4,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-29137",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "panda-44488",
+        "panda-138445",
+        "tamimi-16182",
+        "tamimi-1111778",
+        "panda-39364",
+        "panda-22033",
+        "panda-42049"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h06",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 32.044182,
+          "items": [
+            {
+              "catalogItemId": "tamimi-12201",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-149548",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152912",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-33400",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22019",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1107512",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-8299",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22784",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-17172",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-156842",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "notFound"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 25.855711,
+          "items": [
+            {
+              "catalogItemId": "tamimi-152912",
+              "quantity": 1,
+              "unit": "box",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-33400",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22019",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22784",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-156842",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 15.229381,
+          "items": [
+            {
+              "catalogItemId": "tamimi-12201",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-149548",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-33400",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-8299",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22784",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-156842",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-193980",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 12.005577,
+          "items": [
+            {
+              "catalogItemId": "tamimi-152912",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-33400",
+              "quantity": 2.9,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22019",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1107512",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-17172",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-29280",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 9.318407,
+          "items": [
+            {
+              "catalogItemId": "tamimi-149548",
+              "quantity": 1.8,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152912",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22784",
+              "quantity": 1,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "tamimi-12201",
+        "tamimi-152912",
+        "panda-33400",
+        "panda-8299",
+        "tamimi-156842",
+        "panda-29280",
+        "panda-43466"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h07",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 25.618051,
+          "items": [
+            {
+              "catalogItemId": "tamimi-144980",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1109264",
+              "quantity": 1.0,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42145",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-42049",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-194709",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21907",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-156275",
+              "quantity": 0.7,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-148901",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22720",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194152",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 18.751948,
+          "items": [
+            {
+              "catalogItemId": "tamimi-1109264",
+              "quantity": 1.0,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194709",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21907",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-156275",
+              "quantity": 0.7,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-148901",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-22720",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 9.976378,
+          "items": [
+            {
+              "catalogItemId": "tamimi-1109264",
+              "quantity": 1.0,
+              "unit": "kg",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-42049",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "tamimi-194709",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-156275",
+              "quantity": 0.7,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-148901",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-22720",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194152",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-16205",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-14412",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 5.360735,
+          "items": [
+            {
+              "catalogItemId": "tamimi-144980",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1109264",
+              "quantity": 1.0,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-148901",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-194152",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "tamimi-144980",
+        "tamimi-1109264",
+        "tamimi-194709",
+        "panda-21907",
+        "panda-156275",
+        "panda-148901",
+        "panda-22720",
+        "tamimi-1109321"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h08",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 23.200043,
+          "items": [
+            {
+              "catalogItemId": "tamimi-153613",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-143561",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-152576",
+              "quantity": 2.0,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-45712",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-45613",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1112893",
+              "quantity": 1.6,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-157268",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21877",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-14942",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-14411",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 14.547248,
+          "items": [
+            {
+              "catalogItemId": "tamimi-153613",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-143561",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-45613",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1112893",
+              "quantity": 1.6,
+              "unit": "kg",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-157268",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21877",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1112895",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-156859",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 9.523084,
+          "items": [
+            {
+              "catalogItemId": "panda-45613",
+              "quantity": 2,
+              "unit": "box",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-157268",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-14942",
+              "quantity": 3,
+              "unit": "box",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "tamimi-153613",
+        "tamimi-143561",
+        "tamimi-152576",
+        "panda-45613",
+        "tamimi-1112893",
+        "panda-157268",
+        "panda-21877",
+        "panda-14411"
+      ]
+    },
+    {
+      "group": "fixture-criterion3-h09",
+      "note": "A group the model never trains on. daysBeforeNow is how long before the moment the next list is started each trip was completed, so a test can place the history relative to now.",
+      "trips": [
+        {
+          "daysBeforeNow": 21.927937,
+          "items": [
+            {
+              "catalogItemId": "panda-42131",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "notFound"
+            },
+            {
+              "catalogItemId": "panda-144287",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-18578",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116163",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10128",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-179909",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-151465",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-128165",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-156271",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-44316",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-35514",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-153246",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-21971",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10655",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 17.981485,
+          "items": [
+            {
+              "catalogItemId": "panda-44316",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 14.051945,
+          "items": [
+            {
+              "catalogItemId": "panda-42131",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-18578",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116163",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-128165",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-44316",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        },
+        {
+          "daysBeforeNow": 9.044298,
+          "items": [
+            {
+              "catalogItemId": "panda-144287",
+              "quantity": 3,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "tamimi-1116163",
+              "quantity": 2,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-10128",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            },
+            {
+              "catalogItemId": "panda-44316",
+              "quantity": 1,
+              "unit": "piece",
+              "status": "found"
+            }
+          ]
+        }
+      ],
+      "nextTrip": [
+        "panda-42131",
+        "tamimi-18578",
+        "tamimi-1116163",
+        "panda-10128",
+        "tamimi-179909",
+        "panda-151465",
+        "panda-128165",
+        "panda-156271"
+      ]
+    }
+  ]
+}

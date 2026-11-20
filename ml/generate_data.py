@@ -33,6 +33,7 @@ TRAIN_GROUPS = 200
 FIXTURE_SEED_OFFSET = 8
 FIXTURE_TRIPS = 30
 FIXTURE_MIN_ITEMS = 7
+CRITERION3_HOUSEHOLDS = 10
 DAY_MS = 86_400_000
 HOUR_MS = 3_600_000
 MINUTE_MS = 60_000
@@ -177,29 +178,70 @@ def main():
         for row in rows:
             writer.writerow({**row, "addedAt": iso(row["addedAt"]), "createdAt": iso(row["createdAt"])})
 
-    # The criterion 3 fixture: a household the model never trains on, its history, and the shop
-    # that comes next. The next shop is the household's first big one (FIXTURE_MIN_ITEMS or more),
-    # because with eight suggestions at most a small top-up trip cannot reach 80% precision: three
-    # items on the trip against eight suggestions is 3/8 however good the ranking is.
-    fixture_rng = random.Random(SEED + FIXTURE_SEED_OFFSET)
+    # The criterion 3 fixture: the first held-out household. The API tests seed it as well.
+    fixture = build_fixture(catalog_ids, SEED + FIXTURE_SEED_OFFSET, "fixture-criterion3")
+    (OUT / "criterion3_fixture.json").write_text(json.dumps(fixture, indent=2), encoding="utf-8")
+
+    # The criterion 3 test scores several held-out households and checks the precision over all of
+    # them, so one unusual household cannot decide the result on its own. The first one is the
+    # fixture above; the others use seeds far from it, and none of them is in the training data.
+    # A small household may never do a big shop in FIXTURE_TRIPS trips; that seed is skipped.
+    households = [fixture]
+    attempt = 0
+    while len(households) < CRITERION3_HOUSEHOLDS:
+        attempt += 1
+        household = build_fixture(
+            catalog_ids,
+            SEED + FIXTURE_SEED_OFFSET + 1000 * attempt,
+            f"fixture-criterion3-h{len(households):02d}",
+        )
+        if household is not None:
+            households.append(household)
+    (OUT / "criterion3_households.json").write_text(json.dumps({
+        "note": (
+            "Households the model never trains on, each with its history and the shop that came next. "
+            "The criterion 3 test checks the precision of the suggestions over all of them together."
+        ),
+        "households": households,
+    }, indent=2), encoding="utf-8")
+
+    print(f"{len(rows)} rows from {TRAIN_GROUPS} groups -> out/history.csv")
+    print(f"criterion 3 fixture: {len(fixture['trips'])} trips, next trip has {len(fixture['nextTrip'])} items")
+    print(f"criterion 3 households: {len(households)} -> out/criterion3_households.json")
+
+
+def build_fixture(catalog_ids, seed, group_key):
+    """A household the model never trains on: its history and the shop that comes next.
+
+    None when the household never does a big shop after its third trip.
+
+    The next shop is the household's first big one (FIXTURE_MIN_ITEMS or more), because with eight
+    suggestions at most a small top-up trip cannot reach 80% precision: three items on the trip
+    against eight suggestions is 3/8 however good the ranking is.
+    """
+    fixture_rng = random.Random(seed)
     fixture_profile = make_profile(fixture_rng, catalog_ids)
     fixture_trips = build_trips(fixture_rng, fixture_profile, FIXTURE_TRIPS)
 
     next_index = next(
-        index for index, trip in enumerate(fixture_trips)
-        if index >= 3 and len(trip["items"]) >= FIXTURE_MIN_ITEMS
+        (index for index, trip in enumerate(fixture_trips)
+         if index >= 3 and len(trip["items"]) >= FIXTURE_MIN_ITEMS),
+        None,
     )
+
+    if next_index is None:
+        return None
 
     history_trips = fixture_trips[:next_index]
     next_trip = fixture_trips[next_index]
 
-    history_rows = rows_for_group(fixture_rng, "fixture-criterion3", history_trips, fixture_profile)
+    history_rows = rows_for_group(fixture_rng, group_key, history_trips, fixture_profile)
 
     next_start = BASE_MS + int(next_trip["day"] * DAY_MS) + 12 * HOUR_MS
 
     trips_out = []
     for index, trip in enumerate(history_trips):
-        trip_rows = [row for row in history_rows if row["tripId"] == f"fixture-criterion3-t{index:02d}"]
+        trip_rows = [row for row in history_rows if row["tripId"] == f"{group_key}-t{index:02d}"]
         trip_time = min(row["createdAt"] for row in trip_rows)
         trips_out.append({
             "daysBeforeNow": round((next_start - trip_time) / DAY_MS, 6),
@@ -214,8 +256,8 @@ def main():
             ],
         })
 
-    fixture = {
-        "group": "fixture-criterion3",
+    return {
+        "group": group_key,
         "note": (
             "A group the model never trains on. daysBeforeNow is how long before the moment the next "
             "list is started each trip was completed, so a test can place the history relative to now."
@@ -223,11 +265,6 @@ def main():
         "trips": trips_out,
         "nextTrip": next_trip["items"],
     }
-
-    (OUT / "criterion3_fixture.json").write_text(json.dumps(fixture, indent=2), encoding="utf-8")
-
-    print(f"{len(rows)} rows from {TRAIN_GROUPS} groups -> out/history.csv")
-    print(f"criterion 3 fixture: {len(history_trips)} trips, next trip has {len(next_trip['items'])} items")
 
 
 if __name__ == "__main__":

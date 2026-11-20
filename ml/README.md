@@ -23,15 +23,22 @@ py -3 -m venv .venv
 ## Train
 
 ```powershell
-py -3 generate_data.py     # synthetic households -> out/history.csv, out/criterion3_fixture.json
-py -3 train.py             # -> out/model.json, out/parity_fixture.json, out/validation.json
+py -3 generate_data.py     # synthetic households -> out/history.csv, out/criterion3_fixture.json,
+                           #                         out/criterion3_households.json
+py -3 train.py             # -> out/model.json, ../src/services/suggestions.model.json,
+                           #    out/parity_fixture.json, out/validation.json
 py -3 evaluate.py          # -> out/metrics.json, out/figures/
 ```
 
 `train.py` uses `out/real_history.csv` as well when it exists (see below).
 
-Commit `out/model.json`, `out/parity_fixture.json`, `out/criterion3_fixture.json` and `out/metrics.json`:
-the Node service and the tests read them. `out/figures/`, the CSVs and the virtualenv are ignored.
+`train.py` writes the model twice. `out/model.json` is the original; `../src/services/suggestions.model.json`
+is the identical copy the server loads, kept inside `src/` so the server still starts when `src/` is
+deployed on its own. The parity test fails if the two copies differ.
+
+Commit `out/model.json`, `../src/services/suggestions.model.json`, `out/parity_fixture.json`,
+`out/criterion3_fixture.json`, `out/criterion3_households.json` and `out/metrics.json`: the Node service
+and the tests read them. `out/figures/`, the CSVs, `out/validation.json` and the virtualenv are ignored.
 
 ## Retraining on real trips
 
@@ -40,7 +47,8 @@ py -3 export_history.py --uri <mongo uri> --db qadhely
 py -3 train.py
 ```
 
-Then raise `VERSION` in `train.py`, retrain, commit the new model files and restart the server. The API
+Then raise `VERSION` in `train.py`, retrain, re-run `evaluate.py`, commit the new model files and restart
+the server. The API
 returns the version as `modelVersion`, so a suggestion can be traced to the model that produced it.
 
 ## Files
@@ -52,6 +60,7 @@ returns the version as `modelVersion`, so a suggestion can be traced to the mode
 | `export_history.py` | real `ItemHistory` trip rows from MongoDB, as a CSV |
 | `train.py` | cross-validation, threshold choice, `model.json`, the parity fixture |
 | `evaluate.py` | the comparison table and the report figures |
+| `diagnose.py` | how well each feature separates bought from not bought on its own (per-feature ROC AUC); a check, not part of the pipeline |
 
 ## Results (model version 1, synthetic data)
 
@@ -66,15 +75,35 @@ ROC AUC 0.887 on 5,237 held-out requests (79,520 candidate rows), split by group
 The frequency baseline is deliberately generous: it suggests an item merely for having been bought before.
 The model beats it by 17.7 points of precision at the same k.
 
+Criterion 3 on the ten held-out households (`out/criterion3_households.json`): 39 of the 45 suggested
+items were on the next trip, a pooled precision of 0.867. The test pools the households because a single
+household with eight suggestions drops below 80% on its second miss.
+
 ### A note on the coefficients
 
-`due_ratio` carries a small weight (+0.24), not the largest positive one, although the plan expected it to.
-That is not a feature bug: `days_since_last` (+2.55), `median_interval` (+0.09) and `trips_since_last`
-(-2.81) are collinear with it — they measure the same elapsed time — so the linear model splits one effect
-across three weights with compensating signs. Read as a group they say what `due_ratio` says alone: an item
-bought regularly and long overdue is likely. The per-feature AUCs in `diagnose.py` show the same thing:
-`due_ratio` alone separates positives from negatives at 0.51 because items bought only once inherit the
-fallback interval and look permanently overdue; `trip_freq` alone reaches 0.84. The model needs both.
+Three things in the weights look odd at first and are explained below.
 
-If a future retrain should be easier to explain, the fix is a `staple_and_due` interaction feature, not a
-change to how `due_ratio` is computed.
+**`due_ratio` carries a small weight (+0.24)**, not the largest positive one, although the plan expected
+it to. `days_since_last` (+2.55), `median_interval` (+0.09) and `trips_since_last` (-2.81) measure much of
+the same elapsed time, so the linear model splits that effect across several weights with compensating
+signs. The per-feature AUCs in `diagnose.py` add to this: `due_ratio` alone separates positives from
+negatives at only 0.51, because items bought only once inherit the fallback interval and look permanently
+overdue; `trip_freq` alone reaches 0.84. The model needs both.
+
+**`in_last_trip` (-1.12) and `recent_freq` (-0.54) are negative.** This is a real effect, not an artefact:
+once `trip_freq` says how often an item is bought, having just bought it means the household has just
+restocked it and is less likely to need it on the very next list.
+
+**Dropping the overlapping features does not help.** Measured on the same `GroupKFold` folds, choosing the
+threshold the same way:
+
+| features | ROC AUC | precision@k | recall@k | coverage |
+| --- | --- | --- | --- | --- |
+| all nine (shipped) | 0.887 | 0.850 | 0.521 | 0.929 |
+| without `days_since_last`, `trips_since_last` | 0.882 | 0.851 | 0.481 | 0.898 |
+| also without `median_interval` | 0.882 | 0.851 | 0.479 | 0.895 |
+| also without `recent_freq`, `in_last_trip` | 0.847 | 0.851 | 0.295 | 0.662 |
+
+Every variant reaches the same precision, but each one finds fewer of the items the household buys and
+gives fewer households any suggestion, and the negative weights of `in_last_trip` and `recent_freq` stay
+negative when they are kept. So the model keeps all nine features.
