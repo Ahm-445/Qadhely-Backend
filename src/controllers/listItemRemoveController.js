@@ -33,7 +33,7 @@ function toListItemResponse(item) {
 
 
 // GET /api/groups/:groupId/items
-// Every member of the group can read its list, newest first.
+// Every member of the group can read its list, newest first; replaced items last (US 22).
 const getListItems = async (req, res) => {
 	try {
 
@@ -55,6 +55,9 @@ const getListItems = async (req, res) => {
 		}
 
 		const items = await ListItem.find({ group: group._id }).sort({ createdAt: -1 }).lean();
+
+		// US 22: replaced items stay on the list but move to the end (stable, so newest first within each part)
+		items.sort((a, b) => (a.status === ListItem.ITEM_STATUSES.REPLACED) - (b.status === ListItem.ITEM_STATUSES.REPLACED));
 
 		return res.status(200).json({
 			groupId: String(group._id),
