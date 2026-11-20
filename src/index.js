@@ -17,6 +17,7 @@ const groupRoutes = require("./routes/groupRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const catalogRoutes = require("./routes/catalogRoutes");
 const accountRoutes = require("./routes/accountRoutes");
+const telegramWebhook = require("./webhooks/telegramWebhook");
 
 const User = require("./models/User");
 
@@ -36,6 +37,8 @@ const corsMiddleware = require("./middleware/corsConfig");
 app.use(corsMiddleware);
 
 app.use(express.json());
+
+app.use("/webhooks/telegram", telegramWebhook);
 
 app.use(morgan("dev"));
 

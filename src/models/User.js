@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema ({
 			trim: true,
 			match: [SAUDI_PHONE_REGEX, "Phone number must be Saudi."]
 		},
-
+		telegramChatId: {
+    		type: String,
+    		unique: true,
+   			 sparse: true,
+		},
 		// push tokens of the phones this user is logged in on
 		pushTokens: {
 			type: [String],
