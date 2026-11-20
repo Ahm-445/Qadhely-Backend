@@ -39,7 +39,9 @@ SERVER_MODEL = ROOT.parent / "src" / "services" / "suggestions.model.json"
 
 VERSION = 1
 MAX_SUGGESTIONS = 8
-MIN_TRIPS = 2
+# completed lists a group needs before it gets suggestions; the same as MIN_PAST_TRIPS, so the server
+# only scores groups with as much history as the training examples had (the app tells the user this)
+MIN_TRIPS = 3
 MIN_PAST_TRIPS = 3
 TARGET_PRECISION = 0.85
 THRESHOLDS = [round(0.30 + 0.01 * step, 2) for step in range(66)]
