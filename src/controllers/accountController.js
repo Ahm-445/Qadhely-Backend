@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
+const ItemHistory = require("../models/ItemHistory");
 const AccountDeletionOtp = require("../models/AccountDeletionOtp");
 const OtpRequestLog = require("../models/OtpRequestLog");
 const RegistrationOtp = require("../models/RegistrationOtp");
@@ -184,7 +185,10 @@ async function leaveGroup(group, userId) {
 	const remaining = group.members.filter((m) => String(m.user) !== me);
 
 	if (remaining.length === 0) {
-		await ListItem.deleteMany({ group: group._id });
+		await Promise.all([
+			ListItem.deleteMany({ group: group._id }),
+			ItemHistory.deleteMany({ group: group._id }),
+		]);
 		await Group.deleteOne({ _id: group._id });
 		return "deleted";
 	}

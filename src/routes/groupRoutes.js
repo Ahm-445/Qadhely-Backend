@@ -7,6 +7,8 @@ const { getListItems, removeListItem } = require("../controllers/listItemRemoveC
 const { deleteGroup } = require("../controllers/groupDeleteController");
 const { setItemStatus } = require("../controllers/itemStatusController");
 const { replaceListItem } = require("../controllers/itemReplaceController");
+const { completeList } = require("../controllers/completeListController");
+const { getGroupSuggestions } = require("../controllers/suggestionsController");
 
 
 // US 05 — all group routes need a logged-in user
@@ -31,5 +33,9 @@ router.patch("/:groupId/items/:itemId", protect, updateListItem);
 router.patch("/:groupId/items/:itemId/status", protect, setItemStatus);
 // US 22 — an admin replaces a not-found item with an item from the catalog
 router.post("/:groupId/items/:itemId/replace", protect, replaceListItem);
+// AI suggestions — the admin closes the active list: it becomes one trip in the item history
+router.post("/:groupId/complete-list", protect, completeList);
+// US 23 — the items the model expects on the next list, for the AI suggestions tab
+router.get("/:groupId/suggestions", protect, getGroupSuggestions);
 
 module.exports = router;

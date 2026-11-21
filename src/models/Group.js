@@ -53,10 +53,6 @@ const groupSchema = new mongoose.Schema({
 		index: true
 	},
 
-	members: {
-		type: [memberSchema],
-		default: []
-	},
 members: {
 		type: [memberSchema],
 		default: [],

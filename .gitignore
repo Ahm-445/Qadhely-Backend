@@ -1,1 +1,9 @@
 data/raw/
+
+# the AI suggestions model is trained offline; the server never needs Python
+ml/.venv/
+ml/__pycache__/
+ml/out/figures/
+ml/out/history.csv
+ml/out/real_history.csv
+ml/out/validation.json

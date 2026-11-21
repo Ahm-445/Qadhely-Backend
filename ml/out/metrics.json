@@ -1,0 +1,40 @@
+{
+  "modelVersion": 1,
+  "trainedAt": "2026-11-20T22:02:50.731768Z",
+  "requests": 5237,
+  "rows": 79520,
+  "positiveRate": 0.329,
+  "rocAuc": 0.887,
+  "maxSuggestions": 8,
+  "comparison": {
+    "logisticRegression": {
+      "precisionAtK": 0.8504,
+      "recallAtK": 0.521,
+      "coverage": 0.9293,
+      "threshold": 0.83
+    },
+    "frequencyBaseline": {
+      "precisionAtK": 0.6726,
+      "recallAtK": 0.6715,
+      "coverage": 0.9958,
+      "threshold": 0.5
+    },
+    "dueRatioBaseline": {
+      "precisionAtK": 0.3141,
+      "recallAtK": 0.4525,
+      "coverage": 0.9981,
+      "threshold": 0.8
+    }
+  },
+  "coefficients": {
+    "trip_freq": 2.5635,
+    "recent_freq": -0.5373,
+    "log_count": 0.343,
+    "days_since_last": 2.5488,
+    "trips_since_last": -2.8074,
+    "median_interval": 0.0947,
+    "due_ratio": 0.2357,
+    "interval_cv": -0.0796,
+    "in_last_trip": -1.1166
+  }
+}

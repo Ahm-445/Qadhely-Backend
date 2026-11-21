@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { notifyItemsAdded, resetListCompleted } = require("../services/pushNotifications");
+const { recordAddition } = require("../services/itemHistory");
 const { UNITS, CATALOG_ITEM_ID_PATTERN, CATALOG_ITEM_ID_MAX } = ListItem;
 const { getCatalogItem } = require("../services/catalog");
 
@@ -101,6 +102,9 @@ const addListItem = async (req, res) => {
 			unit,
 			addedBy: userId,
 		});
+
+		// the append-only history the AI suggestions read: this item was added, with no trip yet
+		await recordAddition(item);
 
 		// US 21: a new pending item reopens a completed list
 		await resetListCompleted(group._id);
