@@ -302,7 +302,7 @@ describe("who can remove or modify", () => {
 
 		await send("hello");
 
-		expect(lastReply()).toContain("Send /items to see the list, /group to change the list, /remove to remove an item or /modify");
+		expect(lastReply()).toContain("Send /items to see the list, /group to change the list, /add to add an item, /remove to remove an item or /modify");
 	});
 
 });

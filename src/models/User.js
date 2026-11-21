@@ -33,14 +33,14 @@ const userSchema = new mongoose.Schema(
 
         telegramStep: {
             type: String,
-            enum: ["idle", "select_group", "select_item", "enter_quantity", "confirm_delete"],
+            enum: ["idle", "select_group", "select_item", "enter_quantity", "confirm_delete", "enter_search", "select_result"],
             default: "idle"
         },
 
-        // US 28, US 29: which Telegram flow the steps above belong to
+        // US 28, US 29, Telegram add items: which Telegram flow the steps above belong to
         telegramAction: {
             type: String,
-            enum: ["remove", "modify", null],
+            enum: ["remove", "modify", "add", null],
             default: null
         },
 
@@ -48,6 +48,19 @@ const userSchema = new mongoose.Schema(
         telegramItemId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "ListItem",
+            default: null
+        },
+
+        // Telegram add items: the catalog ids of the search results shown, in the order they were
+        // numbered, so a number always means the product the admin saw
+        telegramSearchResults: {
+            type: [String],
+            default: []
+        },
+
+        // Telegram add items: the product picked, while its quantity and unit are asked for
+        telegramCatalogItemId: {
+            type: String,
             default: null
         },
 

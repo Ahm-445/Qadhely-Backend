@@ -279,11 +279,11 @@ router.post("/", async (req, res) => {
                 if (user.telegramStep === "select_group") {
                     await showAdminGroups(chatId, user);
                 } else if (user.selectedGroupId) {
-                    // US 28, US 29: /remove, /modify, /cancel and their steps
+                    // US 28, US 29, Telegram add items: /add, /remove, /modify, /cancel and their steps
                     if (!(await handleListCommand(chatId, user, text))) {
                         await sendTelegramMessage(
                             chatId,
-                            "Your selected shopping list is saved.\n\nSend /items to see the list, /group to change the list, /remove to remove an item or /modify to change an item's quantity and unit."
+                            "Your selected shopping list is saved.\n\nSend /items to see the list, /group to change the list, /add to add an item, /remove to remove an item or /modify to change an item's quantity and unit."
                         );
                     }
                 } else {
