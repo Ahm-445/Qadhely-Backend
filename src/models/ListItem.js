@@ -146,6 +146,35 @@ listItemSchema.path("quantity").validate(function (value) {
 listItemSchema.index({ group: 1, createdAt: -1 });
 
 
+// US 21: a new item is pending, so the group's list is no longer complete and the next time it
+// completes must notify again. The controllers (add, replace) and the complete-list action clear
+// the group's completion marker themselves; this is the safety net for any other way an item is
+// created (for example the Telegram bot), so none can leave a stale marker that would silence the
+// next "list completed" notification. It never fails the save and is a no-op when nothing is set.
+listItemSchema.pre("save", function () {
+	this.$locals.wasNew = this.isNew;
+});
+
+listItemSchema.post("save", async function (item) {
+	if (!item.$locals.wasNew) return;
+
+	try {
+		const Group = mongoose.models.Group;
+
+		if (!Group) return;
+
+		await Group.updateOne(
+			{ _id: item.group, listCompletedNotifiedAt: { $ne: null } },
+			{ $set: { listCompletedNotifiedAt: null } },
+			{ timestamps: false }
+		);
+	}
+	catch (err) {
+		console.log("[list-completed] could not clear the completion marker:", err.message);
+	}
+});
+
+
 const ListItem = mongoose.models.ListItem || mongoose.model("ListItem", listItemSchema);
 
 module.exports = ListItem;

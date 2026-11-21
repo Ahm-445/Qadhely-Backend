@@ -5,6 +5,7 @@ const ListItem = require("../models/ListItem");
 const { quantityError, toListItemResponse } = require("./listItemController");
 const { getCatalogItem } = require("../services/catalog");
 const { recordAddition } = require("../services/itemHistory");
+const { resetListCompleted } = require("../services/pushNotifications");
 
 const { UNITS, ITEM_STATUSES } = ListItem;
 
@@ -120,6 +121,9 @@ const replaceListItem = async (req, res) => {
 
 		// a replacement is a new item on the list, so the history records it like any addition
 		await recordAddition(replacement);
+
+		// US 21: the replacement is a new pending item
+		await resetListCompleted(group._id);
 
 		return res.status(201).json({
 			message: "Item replaced",

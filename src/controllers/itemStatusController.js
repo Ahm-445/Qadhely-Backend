@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { getCatalogItem } = require("../services/catalog");
+const { notifyListCompleted, resetListCompleted } = require("../services/pushNotifications");
 
 const { ITEM_STATUSES, REPLACEMENT_TEXT_MAX } = ListItem;
 
@@ -85,6 +86,10 @@ const setItemStatus = async (req, res) => {
 			return res.status(403).json({ error: "You are not a member of this group." });
 		}
 
+		// US 21: only a change TO found can complete the list, not marking a found item found again
+		const wasFound = status === ITEM_STATUSES.FOUND
+			&& Boolean(await ListItem.exists({ _id: itemId, group: group._id, status: ITEM_STATUSES.FOUND }).catch(() => null));
+
 		// only items whose status a member can still change (US 22 adds a final "replaced" state)
 		const item = await ListItem.findOneAndUpdate(
 			{ _id: itemId, group: group._id, status: { $in: SETTABLE.concat([null]) } },
@@ -105,6 +110,14 @@ const setItemStatus = async (req, res) => {
 				return res.status(409).json({ error: "This item can no longer be changed." });
 			}
 			return res.status(404).json({ error: "Item not found on this list." });
+		}
+
+		// US 21: tell the admins when this completed the list; any other mark reopens it. Neither can fail the update.
+		if (status === ITEM_STATUSES.FOUND) {
+			if (!wasFound) notifyListCompleted(group._id);
+		}
+		else {
+			await resetListCompleted(group._id);
 		}
 
 		return res.status(200).json({

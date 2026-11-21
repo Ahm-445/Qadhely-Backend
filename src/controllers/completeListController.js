@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { recordTrip } = require("../services/itemHistory");
+const { resetListCompleted } = require("../services/pushNotifications");
 
 const { ITEM_STATUSES } = ListItem;
 
@@ -64,6 +65,10 @@ const completeList = async (req, res) => {
 
 		// clear only the items that went into the trip, so an item added meanwhile stays on the list
 		await ListItem.deleteMany({ group: group._id, _id: { $in: items.map((item) => item._id) } });
+
+		// US 21: the next shopping trip starts fresh, so it can send its own "list completed"
+		// notification. Completing the list never sends one itself, and this never throws.
+		await resetListCompleted(group._id);
 
 		return res.status(200).json({
 			message: "List completed",
