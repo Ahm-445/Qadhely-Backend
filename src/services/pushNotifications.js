@@ -24,8 +24,9 @@ const EXPO_TOKEN_PATTERN = /^(Exponent|Expo)PushToken\[.+\]$/;
 const ITEMS_ADDED_WINDOW_MS = 5 * 60 * 1000;
 
 const NOTIFICATION_TYPES = Object.freeze({
-	ITEMS_ADDED: "items_added",
-	LIST_COMPLETED: "list_completed",
+        ITEMS_ADDED: "items_added",
+        LIST_COMPLETED: "list_completed",
+        ITEM_NOT_FOUND: "item_not_found",
 });
 
 // US 21: a replacement is created a moment after the item it replaces is marked "replaced". Within
@@ -381,10 +382,42 @@ function notifyListCompleted(groupId, now = new Date()) {
 	return track(runListCompleted(groupId, now));
 }
 
+// US 17: notify group creators and admins when an item is marked not found.
+async function runItemNotFound(groupId, itemId, itemName, replacementText) {
+        try {
+                const group = await Group.findById(groupId)
+                        .select("name members")
+                        .lean();
+
+                if (!group) return { messages: 0, deadTokens: 0 };
+
+                return await notifyGroupMembers(group, null, {
+                        title: "Item not found",
+                        body: `${itemName} was marked as not found.`,
+                        roles: ADMIN_ROLES,
+                        data: {
+                                type: NOTIFICATION_TYPES.ITEM_NOT_FOUND,
+                                groupId: String(groupId),
+                                itemId: String(itemId),
+                                itemName,
+                                replacementText: replacementText || null,
+                        },
+                });
+        }
+        catch (err) {
+                console.error("Failed to send item-not-found notification:", err.message);
+                return { messages: 0, deadTokens: 0, failed: true };
+        }
+}
+
+function notifyItemNotFound(groupId, itemId, itemName, replacementText = null) {
+        return track(runItemNotFound(groupId, itemId, itemName, replacementText));
+}
 
 module.exports = {
 	notifyItemsAdded,
 	notifyListCompleted,
+	notifyItemNotFound,
 	resetListCompleted,
 	isListComplete,
 	notifyGroupMembers,

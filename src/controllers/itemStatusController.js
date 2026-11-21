@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Group = require("../models/Group");
 const ListItem = require("../models/ListItem");
 const { getCatalogItem } = require("../services/catalog");
-const { notifyListCompleted, resetListCompleted } = require("../services/pushNotifications");
+const { notifyListCompleted, resetListCompleted, notifyItemNotFound } = require("../services/pushNotifications");
 
 const { ITEM_STATUSES, REPLACEMENT_TEXT_MAX } = ListItem;
 
@@ -90,6 +90,9 @@ const setItemStatus = async (req, res) => {
 		const wasFound = status === ITEM_STATUSES.FOUND
 			&& Boolean(await ListItem.exists({ _id: itemId, group: group._id, status: ITEM_STATUSES.FOUND }).catch(() => null));
 
+		const wasNotFound = status === ITEM_STATUSES.NOT_FOUND
+                        && Boolean(await ListItem.exists({ _id: itemId, group: group._id, status: ITEM_STATUSES.NOT_FOUND }).catch(() => null));
+
 		// only items whose status a member can still change (US 22 adds a final "replaced" state)
 		const item = await ListItem.findOneAndUpdate(
 			{ _id: itemId, group: group._id, status: { $in: SETTABLE.concat([null]) } },
@@ -112,13 +115,26 @@ const setItemStatus = async (req, res) => {
 			return res.status(404).json({ error: "Item not found on this list." });
 		}
 
-		// US 21: tell the admins when this completed the list; any other mark reopens it. Neither can fail the update.
-		if (status === ITEM_STATUSES.FOUND) {
-			if (!wasFound) notifyListCompleted(group._id);
-		}
-		else {
-			await resetListCompleted(group._id);
-		}
+		                // US 21: tell the admins when this completed the list; any other mark reopens it.
+                if (status === ITEM_STATUSES.FOUND) {
+                        if (!wasFound) notifyListCompleted(group._id);
+                }
+                else {
+                        await resetListCompleted(group._id);
+
+                        if (status === ITEM_STATUSES.NOT_FOUND && !wasNotFound) {
+                                const itemName = item.customName
+                                        || getCatalogItem(item.catalogItemId)?.name_en
+                                        || "Unknown item";
+
+                                notifyItemNotFound(
+                                        group._id,
+                                        item._id,
+                                        itemName,
+                                        item.replacementText
+                                );
+                        }
+                }
 
 		return res.status(200).json({
 			message: "Item status updated",
